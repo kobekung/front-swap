@@ -1,0 +1,130 @@
+.offers-detail {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 900px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 1000;
+    max-height: 80vh; /* กำหนดความสูงสูงสุด */
+    overflow-y: auto; /* ทำให้สามารถเลื่อนขึ้นลงได้ */
+}
+
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 40px;
+    color: #000;
+    cursor: pointer;
+    z-index: 1001; /* Make sure it stays on top of other elements */
+}
+
+.offer-card {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    position: relative; /* Ensure the card elements do not overlap with absolute elements like the close button */
+}
+
+.offer-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-grow: 1; /* Ensure the content takes up available space */
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.offer-product-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    position: relative; /* เพื่อให้ข้อความซ้อนบนรูปภาพได้ */
+    margin-left: 60px;
+    margin-right: 10px;
+  }
+
+.offer-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.accept-btn, .reject-btn {
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.accept-btn {
+    background-color: green;
+    color: white;
+}
+
+.reject-btn {
+    background-color: red;
+    color: white;
+}
+
+.offer-status {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.offer-status.accepted {
+    color: green;
+}
+
+.offer-status.rejected {
+    color: red;
+}
+
+.offer-status.pending {
+    color: orange;
+}
+.offer-product-price {
+    position: absolute;
+    top: 31%;
+    left: 38%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 10;
+  }
+  
+  .product-price {
+    position: absolute;
+    top: 31%;
+    left: 16%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 10;
+  }
