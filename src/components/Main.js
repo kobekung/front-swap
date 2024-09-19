@@ -274,7 +274,17 @@ const MainPage = () => {
               <div className="product-actions">
                 <button className="comment-btn" onClick={() => handleProductClick(product.id)}>Comment</button>
                 <span>ราคาประเมิน {product.price} บาท</span>
-                <button className="exchange-btn" onClick={() => handleExchangeClick(product)}>Exchange</button>
+                {user.id !== product.user.id && (
+                  <button className="exchange-btn" onClick={() => handleExchangeClick(product)}>Exchange</button>
+                )
+                }
+                {user.id === product.user.id && (
+                  <button className="exchange-btn" onClick={(e) => {
+                    e.preventDefault();
+                    alert('ไม่สามารถแลกกับสินค้าตัวเองได้!');
+                  }}>Exchange</button>
+                )
+                }
               </div>
             </div>
           ))}

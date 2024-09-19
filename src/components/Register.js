@@ -6,6 +6,7 @@ const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [address, setAddress] = useState('');
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -21,6 +22,7 @@ const RegisterPage = () => {
         firstName,
         lastName,
         phoneNumber,
+        address
       }),
     })
       .then((response) => response.json())
@@ -65,9 +67,12 @@ const RegisterPage = () => {
         <br />
         <label>
           Phone Number:
-          <input type="tel" value={phoneNumber} onChange={(event) => setPhoneNumber(event.target.value)} />
+          <input type="text" value={phoneNumber} onChange={(event) => setPhoneNumber(event.target.value)} />
         </label>
         <br />
+        <label>Address
+          <input type="text" value={address} onChange={(event) => setAddress(event.target.value)} />
+        </label>
         <button type="submit">Register</button>
         {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
         {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
