@@ -143,6 +143,8 @@ const MainPage = () => {
     }
   };
 
+  
+
   const handleCategoryChange = (event) => {
     const categoryId = parseInt(event.target.value, 10);
     const selected = categories.find(cat => cat.id === categoryId);

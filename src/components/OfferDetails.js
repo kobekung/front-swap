@@ -103,8 +103,14 @@ const OffersDetail = ({ userId, onClose }) => {
 
               {offer.status === 'PENDING' && (
                 <div className="offer-actions">
-                  <button className="accept-btn" onClick={() => handleAccept(offer.id)}>Accept</button>
-                  <button className="reject-btn" onClick={() => handleReject(offer.id)}>Reject</button>
+                  <button className="accept-btn" onClick={() => {
+                    const confirmAccept = window.confirm(`Are you sure you want to accept this offer?`);
+                    if (confirmAccept) handleAccept(offer.id);
+                  }}>Accept</button>
+                  <button className="reject-btn" onClick={() => {
+                    const confirmReject = window.confirm(`Are you sure you want to reject this offer?`);
+                    if (confirmReject) handleReject(offer.id);
+                  }}>Reject</button>
                 </div>
               )}
             </li>
