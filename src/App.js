@@ -6,19 +6,19 @@ import ProfilePage from './components/ProfilePage';
 import OfferDetails from './components/OfferDetails';
 import ProductDetail from './components/productDetail';
 import Admin from './components/Admin';
+import './css/style.css';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/main/:id" element={<MainPage />} /> 
+        <Route path="/main/:id" element={<MainPage />} />
         <Route path="/profile/:id" element={<ProfilePage />} />
         <Route path="/offers/:offerId" element={<OfferDetails />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/admin/:id" element={<Admin />} />
-         
-        
+
       </Routes>
     </Router>
   );

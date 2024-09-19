@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Form, Input, Button, Typography } from 'antd';
+
+const { Title } = Typography;
+
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -20,9 +24,9 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:3001/auth/login', formData);
       console.log('Login successful:', response.data);
-  
+
       const { access_token, id } = response.data; // Ensure the names match backend
-  
+
       if (access_token && id) {
         localStorage.setItem('token', access_token); // Store token in local storage
         localStorage.setItem('userId', id); // Store user ID in local storage
@@ -34,31 +38,50 @@ const Login = () => {
       setError(error.response ? error.response.data.message : 'Login failed. Please try again.');
     }
   };
-  
+
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
+    <div className="container-form-login">
+      <Form className="card" onFinish={handleSubmit}>
+        <Title level={2}>Login</Title>
+
+        <Form.Item
+          className='in-username'
+          layout="vertical"
+          label="Email"
           name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
+          rules={[{ required: true, message: 'Please input your email!' }]}
+        >
+          <Input
+            type="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </Form.Item>
+        <Form.Item
+          className='in-pass'
+          layout="vertical"
+          label="Password"
           name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-      {error && <p>{error}</p>}
+          rules={[{ required: true, message: 'Please input your password!' }]}
+        >
+          <Input.Password
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </Form.Item>
+
+        <Form.Item>
+          <Button className='bt-submit' type="primary" htmlType="submit" block>
+            Login
+          </Button>
+        </Form.Item>
+
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+      </Form>
     </div>
+
   );
 };
 
