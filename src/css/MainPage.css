@@ -58,54 +58,6 @@
   flex-grow: 1; /* Ensure content section takes available space */
   overflow: hidden; /* Prevent content from overflowing */
 }
-
-/* Sidebar */
-.sidebar {
-  width: 400px; /* Fixed width for sidebar */
-  background-color: #f3f3f3;
-  padding: 20px;
-  overflow-y: auto; /* Enable vertical scrolling */
-  max-height: calc(100vh - 60px); /* Adjust based on header height */
-}
-
-/* Profile Container */
-.profile-container {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  
-}
-.profile-container:hover {
-  background-color: rgb(218, 215, 215);
-  overflow-y: auto;
-  max-height: calc(100vh - 60px);
-  border-radius: 5%;
-}
-
-.profile-btn1 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-.profile-image1 {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.user-name {
-  font-size: 1em;
-  color: #333;
-  font-weight: bold;
-}
-
 /* Products Section */
 .products-section {
   width: calc(100% - 400px); /* Adjust width to fit sidebar */
