@@ -77,7 +77,7 @@ const ProfilePage = () => {
           const response = await axios.get(`http://localhost:3001/follow/${currentUserId}/following/${id}`);
           setIsFollowing(response.data);
         } catch (error) {
-          console.error('Error checking follow status:', error);
+          console.error('Error checking follow status:', error);  
         }
       }
     };

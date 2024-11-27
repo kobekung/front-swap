@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import ProductForm from './ProductForm';
-import OfferForm from './OfferForm';
-import OffersDetail from './OfferDetails';
+import ProductForm from '../components/ProductForm';
+import OfferForm from '../components/OfferForm';
+import OffersDetail from '../components/OfferDetails';
 import '../css/MainPage.css';
 
 const MainPage = () => {
@@ -20,7 +20,7 @@ const MainPage = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [followers, setFollowers] = useState([]);
   const [showProductForm, setShowProductForm] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct,  setSelectedProduct] = useState(null);
   const [showOfferForm, setShowOfferForm] = useState(false);
   const [showOffersDetail, setShowOffersDetail] = useState(false);
   const [dropdownProductId, setDropdownProductId] = useState(null); // New state for dropdown menu

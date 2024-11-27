@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/ProductDetail.css'; // Add your product detail styles
-import OfferForm from './OfferForm';
+import OfferForm from '../components/OfferForm';
 
 const ProductDetail = () => {
   const { id } = useParams(); // productId
