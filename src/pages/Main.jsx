@@ -4,7 +4,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ProductForm from '../components/ProductForm';
 import OfferForm from '../components/OfferForm';
 import OffersDetail from '../components/OfferDetails';
+import Header from '../components/Header';
 import '../css/MainPage.css';
+import FollowersSection from '../components/FollowersSection';
 
 const MainPage = () => {
   const { id } = useParams();
@@ -159,37 +161,14 @@ const MainPage = () => {
 
   return (
     <div className="main-page">
-     <header className="header">
-        <img className="logo" src="https://cdn.gencraft.com/prod/user/40a3fc59-033c-422d-8852-277e603ed706/b7156f5d-fcd8-43e1-b972-fd2516e84059/image/image1_0.jpg?Expires=1726712452&Signature=Fk0FmdQh~4F6EEj5vfKe-2vsbtWzY7VodX10-NAzWoid~AhqakMOZl3STkz32q9TZgCcNcAo8ClEKKkumMND~raQQOjD7ecftC0olWIdtwzwouNxwX~ChHo49J6uopL7RUdv19hzoIoY8CHUDdv1fwOqPEGmQjjS1JdKOPZmF5WFNTcDoqqFDUFMQGgBAMq2gAWEvlxRF6yYaQPSBZkdNotbOiYE1DIRwqKAq3bMMEpuEdbgmTophvJeuHlPwzROyiENRIg2cJmpfRFlSQP~CtwHJYfr7J-Wl67pLcocEKT02qVDrAagaXzEl2mtHROKAaQ7sK-rFisXoWmDXd~~sw__&Key-Pair-Id=K3RDDB1TZ8BHT8" alt="Switch Swap" />
-        <input 
-          className="search-bar" 
-          type="text" 
-          placeholder="ค้นหา"
-          value={searchProduct}
-          onChange={handleSearchChange}
-        />
-        <select className="category-select" onChange={handleCategoryChange}>
-          <option value="">All Categories</option>
-          {categories.map(category => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-        <div className="menu-icons">
-        <button className="icon-btn bell-icon" onClick={handleOfferClick} type="button">
-            <img className="logout-icon" src='https://cdn-icons-png.flaticon.com/128/2645/2645890.png' alt="Notification Icon" />
-        </button>
-        <button className="icon-btn chat-icon" type="button">
-            <img className="logout-icon" src='https://cdn-icons-png.freepik.com/256/7699/7699178.png?ga=GA1.1.1002826414.1720595920&semt=ais_hybrid' alt="Chat Icon" />
-        </button>
-        <button className="icon-btn menu-icon" onClick={handleLogout} type="button">
-            <img className="logout-icon" src='https://cdn-icons-png.freepik.com/256/10024/10024508.png?ga=GA1.1.1002826414.1720595920&semt=ais_hybrid' alt="Menu Icon" />
-        </button>
-
-        </div>
-      </header>
-
+     <Header
+        searchProduct={searchProduct}
+        handleSearchChange={handleSearchChange}
+        handleCategoryChange={handleCategoryChange}
+        categories={categories}
+        handleOfferClick={handleOfferClick}
+        handleLogout={handleLogout}
+      />
 
       <div className="content">
         <div className="sidebar">
@@ -307,20 +286,7 @@ const MainPage = () => {
             />
           )}
         </div>
-
-        <div className="followers-section">
-          <div className="follower">ผู้ติดตาม</div>
-          {followers.map((follower) => (
-            <div className="follower-card" key={follower.id}>
-              <img onClick={() => handleProfileClick(follower.id)}
-                src={follower.profilePicture || '/default-profile.png'} 
-                alt={follower.firstName} 
-                className="follower-image" 
-              />
-              <div className="follower-name">{follower.firstName + ' ' + follower.lastName}</div>
-            </div>
-          ))}
-        </div>
+          <FollowersSection followers={followers} handleProfileClick={handleProfileClick} />
       </div>
     </div>
   );
