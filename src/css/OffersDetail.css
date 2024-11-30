@@ -128,3 +128,9 @@
     font-weight: bold;
     z-index: 10;
   }
+  .offer-toggle-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
