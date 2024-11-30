@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/OffersDetail.css'; // Ensure the path is correct
+import Chat from '../pages/ChatPage'; // Import the Chat component
 
 const OffersDetail = ({ userId, onClose }) => {
   const [receivedOffers, setReceivedOffers] = useState([]);
@@ -8,6 +9,8 @@ const OffersDetail = ({ userId, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [view, setView] = useState('received'); // New state to toggle between views
+  const [isChatOpen, setIsChatOpen] = useState(false); // Track whether chat is open
+  const [chatUserId, setChatUserId] = useState(null); // Store the ID of the user to chat with
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -53,6 +56,16 @@ const OffersDetail = ({ userId, onClose }) => {
     } catch (error) {
       console.error('Error rejecting offer:', error);
     }
+  };
+
+  const openChat = (offer) => {
+    setChatUserId(offer.fromUser.id); // Set the user to chat with
+    setIsChatOpen(true); // Open the chat modal
+  };
+
+  const closeChat = () => {
+    setIsChatOpen(false); // Close the chat modal
+    setChatUserId(null); // Reset the chat user
   };
 
   if (loading) {
@@ -122,7 +135,7 @@ const OffersDetail = ({ userId, onClose }) => {
                   </div>
                   {offer.status === 'ACCEPTED' && (
                     <div className="chat-actions">
-                      <button>แชท</button>
+                      <button onClick={() => openChat(offer)}>แชท</button>
                     </div>
                   )}
                   {offer.status === 'PENDING' && (
@@ -149,12 +162,15 @@ const OffersDetail = ({ userId, onClose }) => {
                 <li key={offer.id} className="offer-card">
                   <div className="offer-info-container">
                     <div className="offer-info">
+                      <img
+                        src={offer.toUser.profilePicture}
+                        alt={offer.toUser.firstName}
+                        className="profile-pic"
+                      />
                       <span>
-                        ข้อเสนอของคุณ <strong>{offer.name}</strong> {' '}
-                        ต้องการแลก <strong>{offer.product.name}</strong> กับ{' '}
-                        <strong>
-                          {offer.toUser.firstName} {offer.toUser.lastName}
-                        </strong>
+                        {offer.toUser.firstName} {offer.toUser.lastName} ต้องการแลก{' '}
+                        <strong>{offer.name}</strong> กับ{' '}
+                        <strong>{offer.product.name}</strong>.
                       </span>
                     </div>
                     <div className="product-info">
@@ -170,15 +186,25 @@ const OffersDetail = ({ userId, onClose }) => {
                       />
                     </div>
                   </div>
+                  
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
-                    Status: {offer.status}
+                    สถานะ: {offer.status}
                   </div>
+                  {offer.status === 'ACCEPTED' && (
+                    <div className="chat-actions">
+                      <button onClick={() => openChat(offer)}>แชท</button>
+                    </div>
+                  )}
+                  
                 </li>
               ))}
             </ul>
           )}
         </>
       )}
+
+      {/* Chat Modal */}
+      {isChatOpen && <Chat fromUserId={userId} toUserId={chatUserId} onClose={closeChat} />}
     </div>
   );
 };
