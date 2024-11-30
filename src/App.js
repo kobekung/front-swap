@@ -7,12 +7,14 @@ import OfferDetails from './components/OfferDetails';
 import ProductDetail from './pages/productDetail';
 import Admin from './pages/Admin';
 import './css/style.css';
+import Register from './pages/Register';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/main/:id" element={<MainPage />} />
         <Route path="/profile/:id" element={<ProfilePage />} />
         <Route path="/offers/:offerId" element={<OfferDetails />} />

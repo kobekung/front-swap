@@ -29,6 +29,7 @@ const MainPage = () => {
   const [filteredProducts, setFilteredProducts] = useState([]); // New state for filtered products
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
 
   useEffect(() => {
@@ -52,7 +53,7 @@ const MainPage = () => {
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
-        console.log('Data fetched successfully');
+        setIsLoading(false);
       }
     };
 
@@ -157,6 +158,13 @@ const MainPage = () => {
     setSearchProduct(event.target.value);
   };
 
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <div className="spinner"></div> {/* Add a spinner */}
+      </div>
+    );
+  }
 
   return (
     <div className="main-page">

@@ -28,8 +28,8 @@
   }
   
   .profile-image {
-    width: 50px; /* Smaller profile image */
-    height: 50px;
+    width: 25px; /* Smaller profile image */
+    height: 25px;
     border-radius: 50%;
     object-fit: cover;
   }

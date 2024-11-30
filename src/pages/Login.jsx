@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import '../css/Login.css'; // ไฟล์ CSS แยกสำหรับจัดการสไตล์
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +9,7 @@ const Login = () => {
     password: ''
   });
   const [error, setError] = useState(null);
-  const navigate = useNavigate();  // Hook for redirection
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,13 +21,13 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:3001/auth/login', formData);
       console.log('Login successful:', response.data);
-  
-      const { access_token, id } = response.data; // Ensure the names match backend
-  
+
+      const { access_token, id } = response.data;
+
       if (access_token && id) {
-        localStorage.setItem('token', access_token); // Store token in local storage
-        localStorage.setItem('userId', id); // Store user ID in local storage
-        navigate(`/main/${id}`); // Redirect to main page with user ID
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('userId', id);
+        navigate(`/main/${id}`);
       } else {
         setError('Failed to retrieve user ID or token.');
       }
@@ -34,30 +35,52 @@ const Login = () => {
       setError(error.response ? error.response.data.message : 'Login failed. Please try again.');
     }
   };
-  
+
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Login</button>
+    <div className="login-container">
+      <h2 className="text-center">Login</h2>
+      {error && <p className="error-message">{error}</p>}
+
+      <form className="login-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="loginName">Email</label>
+          <input
+            type="email"
+            id="loginName"
+            name="email"
+            className="form-control"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="loginPassword">Password</label>
+          <input
+            type="password"
+            id="loginPassword"
+            name="password"
+            className="form-control"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group remember-forgot">
+          <div className="checkbox-container">
+            <input type="checkbox" id="rememberMe" defaultChecked />
+            <label htmlFor="rememberMe">Remember me</label>
+          </div>
+          <a href="#!" className="forgot-password-link">Forgot password?</a>
+        </div>
+
+
+        <button type="submit" className="btn btn-primary">Sign in</button>
+        <div className="register-link">
+          Not a member? <a href="/register" className="register-link-anchor">Register here</a>
+        </div>
+        
       </form>
-      {error && <p>{error}</p>}
     </div>
   );
 };
