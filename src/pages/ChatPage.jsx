@@ -39,22 +39,31 @@ const Chat = ({ fromUserId, toUserId, onClose }) => {
         console.error('Error fetching chat messages:', error);
       }
     };
-
+  
     fetchMessages();
   }, [fromUserId, toUserId]);
-
+  
   // Handle sending a new message
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return; // Don't send empty messages
     try {
-      await axios.post('http://localhost:3001/chats/create', {
-        from_user_id: fromUserId,  // Sender ID
-        to_user_id: toUserId,      // Receiver ID
-        message: newMessage,       // The message text
+      const response = await axios.post('http://localhost:3001/chats/create', {
+        from_user_id: fromUserId,
+        to_user_id: toUserId,
+        message: newMessage,
       });
-      // Update messages state to include the newly sent message
-      setMessages([...messages, { fromUserId, message: newMessage, createdAt: new Date() }]);
-      setNewMessage(''); // Clear the input field
+      const newChat = response.data;
+
+      // Ensure the correct sender and receiver information is added to the new message
+      setMessages([
+        ...messages,
+        {
+          ...newChat,
+          sender: { id: fromUserId, firstName: 'You', profilePicture: '' },
+          receiver: { id: toUserId, ...user },
+        },
+      ]);
+      setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -85,12 +94,14 @@ const Chat = ({ fromUserId, toUserId, onClose }) => {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={msg.fromUserId === fromUserId ? 'message-sent' : 'message-received'}
+            className={msg.sender.id === fromUserId ? 'message-sent' : 'message-received'}
           >
             <span className="message-text">{msg.message}</span>
-            <span className="message-time">
-              {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </span>
+            <div className="message-info">
+              <span className="message-time">
+                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </div>
           </div>
         ))}
       </div>

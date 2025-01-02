@@ -15,19 +15,23 @@ const OffersDetail = ({ userId, onClose }) => {
   useEffect(() => {
     const fetchOffers = async () => {
       try {
-        const [receivedResponse, sentResponse] = await Promise.all([
-          axios.get(`http://localhost:3001/offers/user/${userId}`),
-          axios.get(`http://localhost:3001/offers/sent/${userId}`),
-        ]);
+        const receivedResponse = await axios.get(`http://localhost:3001/offers/receiver/${userId}`);
         setReceivedOffers(receivedResponse.data);
-        setSentOffers(sentResponse.data);
-        setLoading(false);
       } catch (error) {
-        console.error('Error fetching offers:', error);
-        setError('Failed to fetch offers. Please try again later.');
-        setLoading(false);
+        console.error('Error fetching received offers:', error);
       }
+    
+      try {
+        const sentResponse = await axios.get(`http://localhost:3001/offers/sent/${userId}`);
+        setSentOffers(sentResponse.data);
+      } catch (error) {
+        console.error('Error fetching sent offers:', error);
+      }
+    
+      setLoading(false);
     };
+    
+    
 
     if (userId) fetchOffers();
   }, [userId]);
@@ -108,7 +112,7 @@ const OffersDetail = ({ userId, onClose }) => {
                     <div className="offer-info">
                       <img
                         src={offer.fromUser.profilePicture}
-                        alt={offer.fromUser.firstName}
+                        alt={`${offer.fromUser.firstName} ${offer.fromUser.lastName}`}
                         className="profile-pic"
                       />
                       <span>
@@ -133,15 +137,15 @@ const OffersDetail = ({ userId, onClose }) => {
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
                     สถานะ: {offer.status}
                   </div>
-                  {offer.status === 'ACCEPTED' && (
-                    <div className="chat-actions">
-                      <button onClick={() => openChat(offer)}>แชท</button>
-                    </div>
-                  )}
                   {offer.status === 'PENDING' && (
                     <div className="offer-actions">
                       <button onClick={() => handleAccept(offer.id)}>ยอมรับ</button>
                       <button onClick={() => handleReject(offer.id)}>ปฏิเสธ</button>
+                    </div>
+                  )}
+                  {offer.status === 'ACCEPTED' && (
+                    <div className="chat-actions">
+                      <button onClick={() => openChat(offer)}>แชท</button>
                     </div>
                   )}
                 </li>
@@ -164,7 +168,7 @@ const OffersDetail = ({ userId, onClose }) => {
                     <div className="offer-info">
                       <img
                         src={offer.toUser.profilePicture}
-                        alt={offer.toUser.firstName}
+                        alt={`${offer.toUser.firstName} ${offer.toUser.lastName}`}
                         className="profile-pic"
                       />
                       <span>
@@ -186,7 +190,6 @@ const OffersDetail = ({ userId, onClose }) => {
                       />
                     </div>
                   </div>
-                  
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
                     สถานะ: {offer.status}
                   </div>
@@ -195,7 +198,6 @@ const OffersDetail = ({ userId, onClose }) => {
                       <button onClick={() => openChat(offer)}>แชท</button>
                     </div>
                   )}
-                  
                 </li>
               ))}
             </ul>
