@@ -110,9 +110,10 @@ const ProductsSection = ({
         />
       )}
 
-      {showOffersDetail && (
+      {showOffersDetail &&  (
         <OffersDetail 
           userId={user.id} 
+          productId={user.productId}
           onClose={handleCloseOffersDetail} 
         />
       )}

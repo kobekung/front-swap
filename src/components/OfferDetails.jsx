@@ -3,7 +3,7 @@ import axios from 'axios';
 import '../css/OffersDetail.css'; // Ensure the path is correct
 import Chat from '../pages/ChatPage'; // Import the Chat component
 
-const OffersDetail = ({ userId, onClose }) => {
+const OffersDetail = ({ userId,productId, onClose }) => {
   const [receivedOffers, setReceivedOffers] = useState([]);
   const [sentOffers, setSentOffers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,6 +12,7 @@ const OffersDetail = ({ userId, onClose }) => {
   const [isChatOpen, setIsChatOpen] = useState(false); // Track whether chat is open
   const [chatUserId, setChatUserId] = useState(null); // Store the ID of the user to chat with
 
+  console.log('productId =', productId);
   useEffect(() => {
     const fetchOffers = async () => {
       try {
@@ -39,7 +40,7 @@ const OffersDetail = ({ userId, onClose }) => {
   const handleAccept = async (offerId) => {
     try {
       await axios.post('http://localhost:3001/offers/accept', { offerId });
-      setReceivedOffers((prevOffers) =>
+      setReceivedOffers((prevOffers) => 
         prevOffers.map((offer) =>
           offer.id === offerId ? { ...offer, status: 'ACCEPTED' } : offer
         )
@@ -61,9 +62,25 @@ const OffersDetail = ({ userId, onClose }) => {
       console.error('Error rejecting offer:', error);
     }
   };
+  const handleDeliveryTypeUpdate = async (offerId, deliveryType) => {
+    try {
+      await axios.post(`http://localhost:3001/offers/update-delivery-type`, {
+        offerId,
+        deliveryType,
+      });
+      setReceivedOffers((prevOffers) =>
+        prevOffers.map((offer) =>
+          offer.id === offerId ? { ...offer, deliveryType } : offer
+        )
+      );
+    } catch (error) {
+      console.error('Error updating delivery type:', error);
+    }
+  };
+  
 
   const openChat = (offer) => {
-    setChatUserId(offer.fromUser.id); // Set the user to chat with
+    setChatUserId(offer.fromUser.id); 
     setIsChatOpen(true); // Open the chat modal
   };
 
@@ -146,8 +163,23 @@ const OffersDetail = ({ userId, onClose }) => {
                   {offer.status === 'ACCEPTED' && (
                     <div className="chat-actions">
                       <button onClick={() => openChat(offer)}>แชท</button>
+                      <div className="button-container">
+                        <button
+                          className="btn"
+                          onClick={() => handleDeliveryTypeUpdate(offer.id, 'IN_PERSON')}
+                        >
+                          ตัวต่อตัว
+                        </button>
+                        <button
+                          className="btn"
+                          onClick={() => handleDeliveryTypeUpdate(offer.id, 'REMOTE')}
+                        >
+                          ไปรษณี
+                        </button>
+                      </div>
                     </div>
                   )}
+
                 </li>
               ))}
             </ul>
@@ -206,7 +238,7 @@ const OffersDetail = ({ userId, onClose }) => {
       )}
 
       {/* Chat Modal */}
-      {isChatOpen && <Chat fromUserId={userId} toUserId={chatUserId} onClose={closeChat} />}
+      {isChatOpen && <Chat fromUserId={userId} toUserId={chatUserId} productId={productId} onClose={closeChat} />}
     </div>
   );
 };
