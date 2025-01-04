@@ -12,7 +12,6 @@ const OffersDetail = ({ userId,productId, onClose }) => {
   const [isChatOpen, setIsChatOpen] = useState(false); // Track whether chat is open
   const [chatUserId, setChatUserId] = useState(null); // Store the ID of the user to chat with
 
-  console.log('productId =', productId);
   useEffect(() => {
     const fetchOffers = async () => {
       try {
@@ -77,6 +76,29 @@ const OffersDetail = ({ userId,productId, onClose }) => {
       console.error('Error updating delivery type:', error);
     }
   };
+  const handleMarkAsCompleted = async (productId) => {
+    try {
+      const response = await fetch('http://localhost:3001/products/complete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to mark as completed');
+      }
+  
+      const data = await response.json();
+      console.log('Product marked as completed:', data);
+      // Optionally update UI or state based on the result
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  
+  
   
 
   const openChat = (offer) => {
@@ -88,6 +110,14 @@ const OffersDetail = ({ userId,productId, onClose }) => {
     setIsChatOpen(false); // Close the chat modal
     setChatUserId(null); // Reset the chat user
   };
+  const confirmAction = (message, callback) => {
+    const isConfirmed = window.confirm(message);
+    if (isConfirmed) {
+      callback();
+    }
+  };
+  
+  
 
   if (loading) {
     return <div>Loading offers...</div>;
@@ -135,7 +165,7 @@ const OffersDetail = ({ userId,productId, onClose }) => {
                       <span>
                         {offer.fromUser.firstName} {offer.fromUser.lastName} ต้องการแลก{' '}
                         <strong>{offer.name}</strong> กับ{' '}
-                        <strong>{offer.product.name}</strong>.
+                        <strong>{offer.product.name} </strong>ของคุณ.
                       </span>
                     </div>
                     <div className="product-info">
@@ -152,7 +182,7 @@ const OffersDetail = ({ userId,productId, onClose }) => {
                     </div>
                   </div>
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
-                    สถานะ: {offer.status}
+                    สถานะข้อเสนอ: {offer.status}
                   </div>
                   {offer.status === 'PENDING' && (
                     <div className="offer-actions">
@@ -163,22 +193,49 @@ const OffersDetail = ({ userId,productId, onClose }) => {
                   {offer.status === 'ACCEPTED' && (
                     <div className="chat-actions">
                       <button onClick={() => openChat(offer)}>แชท</button>
-                      <div className="button-container">
+                      {!offer.deliveryType && ( // Only show the delivery buttons if no delivery type is selected
+                        <div className="button-container">
+                          <button
+                            className="btn"
+                            onClick={() =>
+                              confirmAction('คุณต้องการเลือกการจัดส่งแบบตัวต่อตัวหรือไม่?', () =>
+                                handleDeliveryTypeUpdate(offer.id, 'IN_PERSON')
+                              )
+                            }
+                          >
+                            ตัวต่อตัว
+                          </button>
+                          <button
+                            className="btn"
+                            onClick={() =>
+                              confirmAction('คุณต้องการเลือกการจัดส่งแบบไปรษณีหรือไม่?', () =>
+                                handleDeliveryTypeUpdate(offer.id, 'REMOTE')
+                              )
+                            }
+                          >
+                            ไปรษณี
+                          </button>
+                        </div>
+                      )}
+                      {offer.deliveryType && (
+                        <div>
                         <button
-                          className="btn"
-                          onClick={() => handleDeliveryTypeUpdate(offer.id, 'IN_PERSON')}
+                          className="btn-complete"
+                          onClick={() =>
+                            confirmAction(
+                              'คุณต้องการยืนยันว่าคุณได้รับของแล้วหรือไม่?', 
+                              () => handleMarkAsCompleted(offer.product.id) 
+                            )
+                          }
                         >
-                          ตัวต่อตัว
+                          ยืนยันว่าได้รับของแล้ว
                         </button>
-                        <button
-                          className="btn"
-                          onClick={() => handleDeliveryTypeUpdate(offer.id, 'REMOTE')}
-                        >
-                          ไปรษณี
-                        </button>
-                      </div>
+
+                        </div>
+                      )}
                     </div>
                   )}
+
 
                 </li>
               ))}
@@ -204,8 +261,8 @@ const OffersDetail = ({ userId,productId, onClose }) => {
                         className="profile-pic"
                       />
                       <span>
-                        {offer.toUser.firstName} {offer.toUser.lastName} ต้องการแลก{' '}
-                        <strong>{offer.name}</strong> กับ{' '}
+                        {offer.toUser.firstName} {offer.toUser.lastName} ยอมรับข้อเสนอ{' '}
+                        <strong>{offer.name}</strong> แลกกับ{' '}
                         <strong>{offer.product.name}</strong>.
                       </span>
                     </div>
@@ -223,11 +280,29 @@ const OffersDetail = ({ userId,productId, onClose }) => {
                     </div>
                   </div>
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
-                    สถานะ: {offer.status}
+                    สถานะข้อเสนอ: {offer.status}
                   </div>
+                  
                   {offer.status === 'ACCEPTED' && (
                     <div className="chat-actions">
                       <button onClick={() => openChat(offer)}>แชท</button>
+                      {!offer.deliveryType && ( // Only show the delivery buttons if no delivery type is selected
+                        <div className="button-container"></div>
+                      )}
+                      {offer.deliveryType && (
+                        <div>
+                          <button
+                            className="btn-complete"
+                            onClick={() =>
+                              confirmAction('คุณต้องการยืนยันว่าคุณได้รับของแล้วหรือไม่?', () =>
+                                handleMarkAsCompleted(offer.product.id)
+                              )
+                            }
+                          >
+                            ยืนยันว่าได้รับของแล้ว
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </li>
@@ -237,6 +312,13 @@ const OffersDetail = ({ userId,productId, onClose }) => {
         </>
       )}
 
+      
+      {/* {sentOffers.map((offer) => {
+        console.log("Product ID:", offer.product.id);  // Logging offer.product.id here
+        return null;  // Returning null to prevent rendering additional JSX for debugging
+      })} */}
+
+
       {/* Chat Modal */}
       {isChatOpen && <Chat fromUserId={userId} toUserId={chatUserId} productId={productId} onClose={closeChat} />}
     </div>
@@ -244,3 +326,4 @@ const OffersDetail = ({ userId,productId, onClose }) => {
 };
 
 export default OffersDetail;
+

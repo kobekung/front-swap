@@ -158,4 +158,38 @@
   .btn:active {
     background-color: #003d80; /* Even darker shade for active state */
   }
+  .btn-complete {
+    background-color: #4caf50; /* Green background for success */
+    color: white; /* White text for contrast */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Slightly rounded corners */
+    padding: 10px 20px; /* Add padding for a comfortable size */
+    margin-top: 20px;
+    font-size: 16px; /* Adjust font size for readability */
+    font-weight: bold; /* Make the text bold */
+    cursor: pointer; /* Show pointer cursor on hover */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth hover effects */
+  }
   
+  
+  .btn-complete:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+    transform: scale(1.05); /* Slight zoom-in effect on hover */
+  }
+  
+  .btn-complete:active {
+    background-color: #3e8e41; /* Even darker green on active */
+    transform: scale(1); /* Return to normal size on active */
+  }
+  
+  .btn-complete:disabled {
+    background-color: #cccccc; /* Gray background for disabled state */
+    color: #666666; /* Dimmed text color */
+    cursor: not-allowed; /* Show not-allowed cursor for disabled */
+  }
+  .chat-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
