@@ -228,7 +228,7 @@ const OffersDetail = ({ userId,productId, onClose }) => {
                             )
                           }
                         >
-                          ยืนยันว่าได้รับของแล้ว
+                         {offer.product.status === 'complete' ? 'แลกสำเร็จ' : 'ยืนยันว่าได้รับของแล้ว'}
                         </button>
 
                         </div>
@@ -299,7 +299,7 @@ const OffersDetail = ({ userId,productId, onClose }) => {
                               )
                             }
                           >
-                            ยืนยันว่าได้รับของแล้ว
+                            {offer.product.status === 'complete' ? 'แลกสำเร็จ' : 'ยืนยันว่าได้รับของแล้ว'}
                           </button>
                         </div>
                       )}

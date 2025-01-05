@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
-import '../css/register.css';
+import "../css/register.css";
 
 const Register = () => {
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
+    passwordHash: "",
     firstName: "",
     lastName: "",
     phoneNumber: "",
@@ -29,14 +29,16 @@ const Register = () => {
       setSuccess("Registration successful! You can now log in.");
       setFormData({
         email: "",
-        password: "",
+        passwordHash: "",
         firstName: "",
         lastName: "",
         phoneNumber: "",
         address: "",
       });
     } catch (error) {
-      setError(error.response ? error.response.data.message : "Registration failed. Please try again.");
+      setError(
+        error.response?.data?.message || "An error occurred during registration. Please try again."
+      );
     }
   };
 
@@ -50,6 +52,7 @@ const Register = () => {
             type="email"
             id="email"
             name="email"
+            aria-label="Enter your email"
             value={formData.email}
             onChange={handleChange}
             required
@@ -57,12 +60,13 @@ const Register = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="password">Password</label>
+          <label htmlFor="passwordHash">Password</label>
           <input
             type="password"
-            id="password"
-            name="password"
-            value={formData.password}
+            id="passwordHash"
+            name="passwordHash"
+            aria-label="Enter your password"
+            value={formData.passwordHash}
             onChange={handleChange}
             required
           />
@@ -74,6 +78,7 @@ const Register = () => {
             type="text"
             id="firstName"
             name="firstName"
+            aria-label="Enter your first name"
             value={formData.firstName}
             onChange={handleChange}
             required
@@ -86,6 +91,7 @@ const Register = () => {
             type="text"
             id="lastName"
             name="lastName"
+            aria-label="Enter your last name"
             value={formData.lastName}
             onChange={handleChange}
             required
@@ -98,6 +104,7 @@ const Register = () => {
             type="tel"
             id="phoneNumber"
             name="phoneNumber"
+            aria-label="Enter your phone number"
             value={formData.phoneNumber}
             onChange={handleChange}
             required
@@ -110,6 +117,7 @@ const Register = () => {
             type="text"
             id="address"
             name="address"
+            aria-label="Enter your address"
             value={formData.address}
             onChange={handleChange}
             required
@@ -121,7 +129,10 @@ const Register = () => {
 
         <button type="submit" className="btn-submit">Register</button>
         <div className="login-link">
-          Not a member? <a href="/" className="register-link-anchor">Login here</a>
+          Already a member?{" "}
+          <a href="/" className="register-link-anchor">
+            Login here
+          </a>
         </div>
       </form>
     </div>

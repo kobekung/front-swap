@@ -123,12 +123,8 @@
   background-color: green;
 }
 
-.product-status.out_of_stock {
+.product-status.complete {
   background-color: red;
-}
-
-.product-status.discontinued {
-  background-color: blue;
 }
 
 /* Floating Button */
