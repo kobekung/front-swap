@@ -126,13 +126,29 @@ const MainPage = () => {
   };
 
   const handleReportProduct = async (productId) => {
+    const reason = prompt("Please enter the reason for reporting this product:");
+    if (!reason) {
+      alert("Report cancelled. Reason is required.");
+      return;
+    }
+  
+    const details = prompt("Optional: Provide additional details (or leave blank):");
+  
     try {
-      await axios.post(`http://localhost:3001/products/${productId}/report`);
-      alert('Product reported successfully');
+      const response = await axios.post(`http://localhost:3001/reports`, {
+        productId,  // Include the productId in the request
+        userId: user.id,  // Assuming user.id is available in your context or state
+        reason,
+        details,
+      });
+  
+      alert("Product reported successfully!");
     } catch (error) {
-      console.error('Error reporting product:', error);
+      alert(error.response?.data?.message || "Failed to report the product.");
     }
   };
+  
+  
 
   const handleDeleteProduct = async (productId) => {
     try {
