@@ -42,11 +42,13 @@
   
   /* Product image */
   .product-detail-image {
-    width: 100%;
+    width: 50%;
     max-height: 400px;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 20px; /* Spacing between image and text */
+    display: block;
+    margin: 0 auto;
   }
   
   /* Product details */

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/ChatPage.css'; // Import your CSS file
 
-const Chat = ({ fromUserId, toUserId,productId ,onClose}) => {
+const Chat = ({ fromUserId, toUserId, productId, onClose }) => {
   const [messages, setMessages] = useState([]); // Store chat messages
   const [newMessage, setNewMessage] = useState(''); // Store the new message
   const [loading, setLoading] = useState(true); // Loading state
@@ -26,13 +26,11 @@ const Chat = ({ fromUserId, toUserId,productId ,onClose}) => {
     fetchUserDetails();
   }, [toUserId]);
 
-  // Fetch chat messages when component is mounted or fromUserId/toUserId changes
+  // Fetch chat messages based on the productId
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/chats/get', {
-          params: { fromUserId, toUserId },
-        });
+        const response = await axios.get(`http://localhost:3001/chats/getByProductId/${productId}`);
         setMessages(response.data.map((msg) => ({
           ...msg,
           product: msg.product || null, // Include product details if available
@@ -42,11 +40,10 @@ const Chat = ({ fromUserId, toUserId,productId ,onClose}) => {
         console.error('Error fetching chat messages:', error);
       }
     };
-  
+
     fetchMessages();
-  }, [fromUserId, toUserId]);
-  
-  
+  }, [productId]); // Only re-fetch if productId changes
+
   // Handle sending a new message
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return; // Don't send empty messages
@@ -58,7 +55,7 @@ const Chat = ({ fromUserId, toUserId,productId ,onClose}) => {
         productId, // Add productId here
       });
       const newChat = response.data;
-  
+
       setMessages([
         ...messages,
         {
@@ -72,7 +69,6 @@ const Chat = ({ fromUserId, toUserId,productId ,onClose}) => {
       console.error('Error sending message:', error);
     }
   };
-  
 
   if (loading) return <div>Loading chat...</div>; // Show loading state if data is not ready
 
@@ -96,25 +92,24 @@ const Chat = ({ fromUserId, toUserId,productId ,onClose}) => {
 
       {/* Chat Body */}
       <div className="chat-body">
-      {messages.map((msg, index) => (
-  <div
-    key={index}
-    className={msg.sender.id === fromUserId ? 'message-sent' : 'message-received'}
-  >
-          {msg.product && (
-            <div className="product-info">
-              <span>Product: {msg.product.name}</span>
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={msg.sender.id === fromUserId ? 'message-sent' : 'message-received'}
+          >
+            {msg.product && (
+              <div className="product-info">
+                <span>Product: {msg.product.name}</span>
+              </div>
+            )}
+            <span className="message-text">{msg.message}</span>
+            <div className="message-info">
+              <span className="message-time">
+                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>
             </div>
-          )}
-          <span className="message-text">{msg.message}</span>
-          <div className="message-info">
-            <span className="message-time">
-              {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            </span>
           </div>
-        </div>
-      ))}
-
+        ))}
       </div>
 
       {/* Chat Footer */}

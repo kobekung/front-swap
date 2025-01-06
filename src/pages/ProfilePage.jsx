@@ -1,8 +1,10 @@
+// src/pages/ProfilePage.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/ProfilePage.css'; // Add your profile page styles
-import { Button, Form } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
+import ProfileEditForm from '../components/ProfileEditForm'; // Import the ProfileEditForm component
 
 const ProfilePage = () => {
   const { id } = useParams();
@@ -113,129 +115,82 @@ const ProfilePage = () => {
     setIsEditing(prev => !prev);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditForm(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSave = async () => {
-    try {
-      await axios.patch(`http://localhost:3001/users/${id}`, editForm);
-      setUser(editForm);
-      setIsEditing(false);
-      alert('Profile updated successfully');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    }
-  };
   const handleProductClick = (productId) => {
     navigate(`/products/${productId}?userId=${id}`);
   };
 
   return (
     <div className="profile-page">
-      <header className="profile-header">
-        <h1>{user.firstName} {user.lastName}</h1>
-        <h2>{user.nickname}</h2>
-      </header>
+      <div className="profile-header bg">
+        <div className="profile-header-content">
+          <div className="profile-picture-container">
+            <img 
+              src={user.profilePicture || '/default-profile.png'} 
+              alt="Profile" 
+              className="profile-image" 
+            />
+          </div>
+          <div className="profile-details">
+            <h1>{user.firstName} {user.lastName}</h1>
+            <h2>{user.nickname}</h2>
+            <div className="profile-actions">
+              {currentUserId && currentUserId === id && (
+                <Button variant="primary" onClick={handleEditToggle}>Edit Profile</Button>
+              )}
+              {currentUserId && currentUserId !== id && (
+                isFollowing ? (
+                  <Button variant="danger" onClick={handleUnfollow}>Unfollow</Button>
+                ) : (
+                  <Button variant="primary" onClick={handleFollow}>Follow</Button>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="profile-info">
-        <img 
-          src={user.profilePicture || '/default-profile.png'} 
-          alt="Profile" 
-          className="profile-image" 
-        />
         {isEditing ? (
-          <Form>
-            <Form.Group controlId="formFirstName">
-              <Form.Label>First Name</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="firstName" 
-                value={editForm.firstName} 
-                onChange={handleChange} 
-              />
-            </Form.Group>
-            <Form.Group controlId="formLastName">
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="lastName" 
-                value={editForm.lastName} 
-                onChange={handleChange} 
-              />
-            </Form.Group>
-            <Form.Group controlId="formNickname">
-              <Form.Label>Nickname</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="nickname" 
-                value={editForm.nickname} 
-                onChange={handleChange} 
-              />
-            </Form.Group>
-            <Form.Group controlId="formPhoneNumber">
-              <Form.Label>Phone Number</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="phoneNumber" 
-                value={editForm.phoneNumber} 
-                onChange={handleChange} 
-              />
-            </Form.Group>
-            <Form.Group controlId="formAddress">
-              <Form.Label>Address</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="address" 
-                value={editForm.address} 
-                onChange={handleChange} 
-              />
-            </Form.Group>
-            <Form.Group controlId="formProfilePicture">
-              <Form.Label>Profile Picture URL</Form.Label>
-              <Form.Control 
-                type="text" 
-                name="profilePicture" 
-                value={editForm.profilePicture} 
-                onChange={handleChange} 
-              />
-            </Form.Group>
-            <Button variant="primary" onClick={handleSave}>Save</Button>
-            <Button variant="secondary" onClick={handleEditToggle}>Cancel</Button>
-          </Form>
+          <ProfileEditForm 
+            editForm={editForm}
+            handleChange={(e) => {
+              const { name, value } = e.target;
+              setEditForm(prev => ({ ...prev, [name]: value }));
+            }}
+            handleSave={async () => {
+              try {
+                await axios.patch(`http://localhost:3001/users/${id}`, editForm);
+                setUser(editForm);
+                setIsEditing(false);
+              } catch (error) {
+                console.error('Error updating profile:', error);
+              }
+            }}
+            handleEditToggle={handleEditToggle}
+          />
         ) : (
           <>
             <p>Email: {user.email}</p>
             <p>Phone: {user.phoneNumber}</p>
             <p>Address: {user.address}</p>
-            <Button variant="secondary" className="back-button" onClick={handleBack}>Back</Button>
-            {currentUserId && currentUserId === id && (
-              <Button variant="primary" onClick={handleEditToggle}>Edit Profile</Button>
-            )}
-            {currentUserId && currentUserId !== id && (
-              isFollowing ? (
-                <Button variant="danger" className="follower-button" onClick={handleUnfollow}>Unfollow</Button>
-              ) : (
-                <Button variant="primary" className="follower-button" onClick={handleFollow}>Follow</Button>
-              )
-            )}
+            <Button variant="secondary" onClick={handleBack}>Back</Button>
           </>
         )}
       </div>
-      <div className="products-section">
+
+      <div className="profile-products-section">
         <h2>Products Posted by {user.firstName}</h2>
         {products.length > 0 ? (
           products.map((product) => (
-            <div className="product-card" key={product.id}>
+            <div className="profile-product-card" key={product.id} onClick={() => handleProductClick(product.id)}>
               <img 
                 src={product.image || '/default-product.png'} 
                 alt={product.name} 
-                className="product-image"
-                onClick={() => handleProductClick(product.id)} 
+                className="profile-product-image" 
               />
-              <div className="product-info">
-                <h3 className="product-name">{product.name}</h3>
-                <span className="product-status1" style={{ backgroundColor: getStatusColor(product.status) }}>
+              <div className="profile-product-info">
+                <h3 className="profile-product-name">{product.name}</h3>
+                <span className="profile-product-status" style={{ backgroundColor: getStatusColor(product.status) }}>
                   {product.status}
                 </span>
               </div>
@@ -253,7 +208,7 @@ const getStatusColor = (status) => {
   switch (status) {
     case 'available':
       return 'green';
-    case 'out_of_stock':
+    case 'complete':
       return 'red';
     case 'discontinued':
       return 'blue';
