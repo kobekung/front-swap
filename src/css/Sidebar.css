@@ -7,7 +7,7 @@
     border-right: 1px solid #ddd;
   }
   
-  .profile-container {
+  .profile-container1 {
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -16,7 +16,7 @@
     transition: background-color 0.2s;
   }
   
-  .profile-container:hover {
+  .profile-container1:hover {
     background-color: #e4e6eb; /* Lighter gray to match Facebook hover effect */
   }
   
@@ -27,9 +27,9 @@
     margin-right: 12px;
   }
   
-  .profile-image {
-    width: 25px; /* Smaller profile image */
-    height: 25px;
+  .profile-image1 {
+    width: 50px; /* Smaller profile image */
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
   }
@@ -64,7 +64,7 @@
   
   .admin-icon {
     margin-right: 8px;
-    font-size: 1.3em;
+    font-size: 1em;
   }
   
   .sidebar-nav {

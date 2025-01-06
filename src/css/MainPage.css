@@ -343,24 +343,6 @@
     flex-direction: column;
   }
 
-  .sidebar {
-    width: 100%;
-    max-height: none;
-  }
-
-  .products-section {
-    width: 100%;
-  }
-
-  .profile-container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .profile-btn {
-    margin-bottom: 10px;
-  }
-
   .product-card {
     margin: 8px 0;
   }
