@@ -1,7 +1,49 @@
-import React from 'react';
-import { Button, Input, Form, Row, Col } from 'antd';
+import React, { useState } from 'react';
+import { Button, Input, Form, Row, Col, Upload, message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle }) => {
+  const [fileList, setFileList] = useState([]);
+
+  // Handle upload change to capture the file and update profile picture field
+  const handleUploadChange = async ({ file, fileList }) => {
+    setFileList(fileList); // Update the file list state
+    if (file.status === 'done') {
+      message.success(`${file.name} file uploaded successfully`);
+      const fileUrl = file.response?.url; // Assuming the server returns the file URL
+      handleChange({
+        target: { name: 'profilePicture', value: fileUrl },
+      });
+    } else if (file.status === 'error') {
+      message.error(`${file.name} file upload failed.`);
+    }
+  };
+
+  // Handle the profile picture upload to the backend
+  const handleProfilePictureUpload = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:3001/users/${editForm.id}/upload-profile-picture`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      );
+
+      // Handle the response, and set the uploaded image URL in the form
+      message.success(response.data.message);
+      handleChange({
+        target: { name: 'profilePicture', value: response.data.url },
+      });
+    } catch (error) {
+      message.error('Profile picture upload failed.');
+    }
+  };
+
   return (
     <Form
       layout="vertical"
@@ -77,15 +119,16 @@ const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle 
       </Form.Item>
 
       <Form.Item
-        label="Profile Picture URL"
+        label="Profile Picture"
         name="profilePicture"
       >
-        <Input
-          type="text"
-          name="profilePicture"
-          value={editForm.profilePicture}
-          onChange={handleChange}
-        />
+        <Upload
+          customRequest={({ file }) => handleProfilePictureUpload(file)}
+          showUploadList={false} // Hide the default upload list
+          accept="image/*"
+        >
+          <Button icon={<UploadOutlined />}>Upload Profile Picture</Button>
+        </Upload>
       </Form.Item>
 
       <Row gutter={16}>

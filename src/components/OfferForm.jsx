@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Input, Button, message, Form, Upload, InputNumber } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import '../css/OfferForm.css'; // Ensure you're using the existing CSS
 
 const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
@@ -7,22 +9,19 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
     name: '',
     description: '',
     price: '',
-    image: '', // Add image field for the URL
+    image: '',
     status: 'pending',
   });
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [imageFile, setImageFile] = useState(null); // State to hold the selected file
+  const [imageFile, setImageFile] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setOfferDetails({ ...offerDetails, [name]: value });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file); // Store the file in the state
+  const handleFileChange = (info) => {
+    if (info.file.status === 'done') {
+      setImageFile(info.file.originFileObj);
     }
   };
 
@@ -37,49 +36,45 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
       let imageUrl = '';
 
       if (imageFile) {
-        // Create a FormData object to send the image file
         const formData = new FormData();
         formData.append('file', imageFile);
 
-        // Upload the image and get the URL
         const uploadResponse = await axios.post('http://localhost:3001/offers/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
 
-        imageUrl = uploadResponse.data.url; // Assuming your backend returns the image URL
+        imageUrl = uploadResponse.data.url;
       }
 
       const offerData = {
         ...offerDetails,
-        status: 'PENDING', // Ensure valid status
-        price: parseFloat(offerDetails.price), // Ensure price is a number
+        status: 'PENDING',
+        price: parseFloat(offerDetails.price),
         from_user_id: parseInt(fromUserId, 10),
         to_user_id: parseInt(toUserId, 10),
         product_id: parseInt(productId, 10),
-        image: imageUrl, // Use the uploaded image URL
+        image: imageUrl,
       };
 
-      // Submit the offer data
       await axios.post('http://localhost:3001/offers/create', offerData);
-      setSuccessMessage('Offer sent successfully!');
+      message.success('Offer sent successfully!');
       setOfferDetails({
         name: '',
         description: '',
         price: '',
         status: 'pending',
-        image: '', // Clear image URL
+        image: '',
       });
-      setImageFile(null); // Clear selected file
+      setImageFile(null);
 
       setTimeout(() => {
-        setSuccessMessage('');
-        onClose(); // Close the form after submission
+        onClose();
       }, 3000);
     } catch (error) {
       console.error('Error creating offer:', error.response.data);
-      setError('Failed to create offer.');
+      message.error('Failed to create offer.');
     }
   };
 
@@ -87,56 +82,55 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
     <div className="offer-form-popup">
       <div className="offer-form-content">
         <h2>Create Offer</h2>
-        {error && <div className="error-message">{error}</div>}
-        {successMessage && <div className="success-message">{successMessage}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="name">Offer Name</label>
-            <input
-              type="text"
+        <Form onSubmit={handleSubmit}>
+          <Form.Item label="Offer Name" required>
+            <Input
               name="name"
               value={offerDetails.name}
               onChange={handleChange}
-              required
+              placeholder="Enter offer name"
             />
-          </div>
+          </Form.Item>
 
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
+          <Form.Item label="Description" required>
+            <Input.TextArea
               name="description"
               value={offerDetails.description}
               onChange={handleChange}
-              required
+              placeholder="Enter offer description"
             />
-          </div>
+          </Form.Item>
 
-          <div className="form-group">
-            <label htmlFor="price">Price</label>
-            <input
-              type="number"
+          <Form.Item label="Price" required>
+            <InputNumber
               name="price"
               value={offerDetails.price}
-              onChange={handleChange}
-              required
+              onChange={(value) => setOfferDetails({ ...offerDetails, price: value })}
+              min={0}
+              placeholder="Enter price"
+              style={{ width: '100%' }}
             />
-          </div>
+          </Form.Item>
 
-          <div className="form-group">
-            <label htmlFor="image">Image Upload</label>
-            <input
-              type="file"
+          <Form.Item label="Image Upload">
+            <Upload
               name="image"
-              onChange={handleFileChange} // Handle file input
-              accept="image/*"
-            />
-          </div>
+              listType="picture"
+              onChange={handleFileChange}
+              beforeUpload={() => false} // Prevent automatic upload
+              showUploadList={false}
+            >
+              <Button icon={<UploadOutlined />}>Select Image</Button>
+            </Upload>
+          </Form.Item>
 
           <div className="form-buttons">
-            <button type="submit">Submit Offer</button>
-            <button type="button" onClick={onClose}>Cancel</button>
+            <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
+              Submit Offer
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
           </div>
-        </form>
+        </Form>
       </div>
     </div>
   );
