@@ -35,13 +35,6 @@ const Header = ({ searchProduct, handleSearchChange, handleCategoryChange, categ
             alt="Notification Icon"
           />
         </button>
-        <button className="icon-btn chat-icon" type="button">
-          <img
-            className="logout-icon"
-            src="https://cdn-icons-png.freepik.com/256/7699/7699178.png?ga=GA1.1.1002826414.1720595920&semt=ais_hybrid"
-            alt="Chat Icon"
-          />
-        </button>
         <button className="icon-btn menu-icon" onClick={handleLogout} type="button">
           <img
             className="logout-icon"

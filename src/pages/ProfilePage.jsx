@@ -1,11 +1,12 @@
 // src/pages/ProfilePage.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { message,Modal } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/ProfilePage.css'; // Add your profile page styles
 import { Button } from 'react-bootstrap';
 import ProfileEditForm from '../components/ProfileEditForm'; // Import the ProfileEditForm component
-
+const { confirm } = Modal;
 const ProfilePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -88,23 +89,46 @@ const ProfilePage = () => {
   }, [currentUserId, id]);
 
   const handleFollow = async () => {
-    try {
-      await axios.post(`http://localhost:3001/follow/${currentUserId}/follow/${id}`);
-      setIsFollowing(true);
-      alert('Followed successfully');
-    } catch (error) {
-      console.error('Error following user:', error);
-    }
+    Modal.confirm({
+      title: 'Confirm Follow',
+      content: 'คุณต้องการจะ follow ผู้ใช้นี้ไหม?',
+      okText: 'ใข่',
+      okType: 'primary',
+      cancelText: 'ไม่ใช่',
+      onOk: async () => {
+        try {
+          await axios.post(`http://localhost:3001/follow/${currentUserId}/follow/${id}`);
+          setIsFollowing(true);
+          message.success('Followed successfully');
+        } catch (error) {
+          console.error('Error following user:', error);
+          message.error('Failed to follow user. Please try again.');
+        }
+      },
+    });
   };
 
   const handleUnfollow = async () => {
-    try {
-      await axios.delete(`http://localhost:3001/follow/${currentUserId}/unfollow/${id}`);
-      setIsFollowing(false);
-      alert('Unfollowed successfully');
-    } catch (error) {
-      console.error('Error unfollowing user:', error);
-    }
+    Modal.confirm({
+      title: 'Confirm Unfollow',
+      content: 'คุณต้องการจะ unfollow ผู้ใช้นี้ไหม?',
+      okText: 'ใข่',
+      okType: 'danger',
+      cancelText: 'ไม่ใช่',
+      onOk: async () => {
+        try {
+          await axios.delete(`http://localhost:3001/follow/${currentUserId}/unfollow/${id}`);
+          setIsFollowing(false);
+          message.success('Unfollowed successfully');
+        } catch (error) {
+          console.error('Error unfollowing user:', error);
+          message.error('Failed to unfollow user. Please try again.');
+        }
+      },
+      onCancel: () => {
+        message.info('Unfollow cancelled');
+      },
+    });
   };
 
   const handleBack = () => {

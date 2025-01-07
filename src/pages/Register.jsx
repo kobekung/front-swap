@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Input, Button, Form, Alert } from 'antd';
 import "../css/register.css";
 
 const Register = () => {
@@ -19,13 +20,11 @@ const Register = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
     setError(null);
     setSuccess(null);
-
     try {
-      const response = await axios.post("http://localhost:3001/auth/register", formData);
+      const response = await axios.post("http://localhost:3001/auth/register", values);
       setSuccess("Registration successful! You can now log in.");
       setFormData({
         email: "",
@@ -45,96 +44,108 @@ const Register = () => {
   return (
     <div className="register-container">
       <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
+      <Form
+        onFinish={handleSubmit}
+        initialValues={formData}
+        layout="vertical"
+        autoComplete="off"
+      >
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[{ required: true, message: 'Please enter your email!' }]}
+        >
+          <Input
             type="email"
-            id="email"
             name="email"
-            aria-label="Enter your email"
             value={formData.email}
             onChange={handleChange}
-            required
+            aria-label="Enter your email"
           />
-        </div>
+        </Form.Item>
 
-        <div className="form-group">
-          <label htmlFor="passwordHash">Password</label>
-          <input
-            type="password"
-            id="passwordHash"
+        <Form.Item
+          label="Password"
+          name="passwordHash"
+          rules={[{ required: true, message: 'Please enter your password!' }]}
+        >
+          <Input.Password
             name="passwordHash"
-            aria-label="Enter your password"
             value={formData.passwordHash}
             onChange={handleChange}
-            required
+            aria-label="Enter your password"
           />
-        </div>
+        </Form.Item>
 
-        <div className="form-group">
-          <label htmlFor="firstName">First Name</label>
-          <input
-            type="text"
-            id="firstName"
+        <Form.Item
+          label="First Name"
+          name="firstName"
+          rules={[{ required: true, message: 'Please enter your first name!' }]}
+        >
+          <Input
             name="firstName"
-            aria-label="Enter your first name"
             value={formData.firstName}
             onChange={handleChange}
-            required
+            aria-label="Enter your first name"
           />
-        </div>
+        </Form.Item>
 
-        <div className="form-group">
-          <label htmlFor="lastName">Last Name</label>
-          <input
-            type="text"
-            id="lastName"
+        <Form.Item
+          label="Last Name"
+          name="lastName"
+          rules={[{ required: true, message: 'Please enter your last name!' }]}
+        >
+          <Input
             name="lastName"
-            aria-label="Enter your last name"
             value={formData.lastName}
             onChange={handleChange}
-            required
+            aria-label="Enter your last name"
           />
-        </div>
+        </Form.Item>
 
-        <div className="form-group">
-          <label htmlFor="phoneNumber">Phone Number</label>
-          <input
+        <Form.Item
+          label="Phone Number"
+          name="phoneNumber"
+          rules={[{ required: true, message: 'Please enter your phone number!' }]}
+        >
+          <Input
             type="tel"
-            id="phoneNumber"
             name="phoneNumber"
-            aria-label="Enter your phone number"
             value={formData.phoneNumber}
             onChange={handleChange}
-            required
+            aria-label="Enter your phone number"
           />
-        </div>
+        </Form.Item>
 
-        <div className="form-group">
-          <label htmlFor="address">Address</label>
-          <input
-            type="text"
-            id="address"
+        <Form.Item
+          label="Address"
+          name="address"
+          rules={[{ required: true, message: 'Please enter your address!' }]}
+        >
+          <Input
             name="address"
-            aria-label="Enter your address"
             value={formData.address}
             onChange={handleChange}
-            required
+            aria-label="Enter your address"
           />
-        </div>
+        </Form.Item>
 
-        {error && <p className="error-message">{error}</p>}
-        {success && <p className="success-message">{success}</p>}
+        {error && <Alert message={error} type="error" />}
+        {success && <Alert message={success} type="success" />}
 
-        <button type="submit" className="btn-submit">Register</button>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block>
+            Register
+          </Button>
+        </Form.Item>
+
         <div className="login-link">
           Already a member?{" "}
           <a href="/" className="register-link-anchor">
             Login here
           </a>
         </div>
-      </form>
+      </Form>
     </div>
   );
 };

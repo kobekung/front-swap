@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Input, Button, Checkbox, Form, Alert } from 'antd';
 import '../css/Login.css'; // ไฟล์ CSS แยกสำหรับจัดการสไตล์
 
 const Login = () => {
@@ -16,10 +17,9 @@ const Login = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (values) => {
     try {
-      const response = await axios.post('http://localhost:3001/auth/login', formData);
+      const response = await axios.post('http://localhost:3001/auth/login', values);
       console.log('Login successful:', response.data);
 
       const { access_token, id } = response.data;
@@ -39,48 +39,60 @@ const Login = () => {
   return (
     <div className="login-container">
       <h2 className="text-center">Login</h2>
-      {error && <p className="error-message">{error}</p>}
+      {error && <Alert message={error} type="error" />}
 
-      <form className="login-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="loginName">Email</label>
-          <input
+      <Form
+        name="login"
+        className="login-form"
+        onFinish={handleSubmit}
+        initialValues={formData}
+        layout="vertical"
+        autoComplete="off"
+      >
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[{ required: true, message: 'Please enter your email!' }]}
+        >
+          <Input
             type="email"
-            id="loginName"
             name="email"
-            className="form-control"
             value={formData.email}
             onChange={handleChange}
+            placeholder="Enter your email"
+            aria-label="Email"
           />
-        </div>
+        </Form.Item>
 
-        <div className="form-group">
-          <label htmlFor="loginPassword">Password</label>
-          <input
-            type="password"
-            id="loginPassword"
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[{ required: true, message: 'Please enter your password!' }]}
+        >
+          <Input.Password
             name="password"
-            className="form-control"
             value={formData.password}
             onChange={handleChange}
+            placeholder="Enter your password"
+            aria-label="Password"
           />
-        </div>
+        </Form.Item>
 
-        <div className="form-group remember-forgot">
-          <div className="checkbox-container">
-            <input type="checkbox" id="rememberMe" defaultChecked />
-            <label htmlFor="rememberMe">Remember me</label>
-          </div>
+        <Form.Item>
+          <Checkbox defaultChecked>Remember me</Checkbox>
           <a href="#!" className="forgot-password-link">Forgot password?</a>
-        </div>
+        </Form.Item>
 
+        <Form.Item>
+          <Button type="primary" htmlType="submit" block>
+            Sign in
+          </Button>
+        </Form.Item>
 
-        <button type="submit" className="btn btn-primary">Sign in</button>
         <div className="register-link">
           Not a member? <a href="/register" className="register-link-anchor">Register here</a>
         </div>
-        
-      </form>
+      </Form>
     </div>
   );
 };

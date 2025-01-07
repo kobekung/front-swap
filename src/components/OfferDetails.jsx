@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Modal, message } from 'antd';
 import axios from 'axios';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import '../css/OffersDetail.css'; // Ensure the path is correct
 import Chat from '../pages/ChatPage'; // Import the Chat component
+const { confirm } = Modal;
 
 const OffersDetail = ({ userId, productId, onClose }) => {
   const [receivedOffers, setReceivedOffers] = useState([]);
@@ -12,6 +15,7 @@ const OffersDetail = ({ userId, productId, onClose }) => {
   const [activeChatProductId, setActiveChatProductId] = useState(null); // Track the active product chat
   const [isChatOpen, setIsChatOpen] = useState(false); // Track whether chat is open
   const [chatUserId, setChatUserId] = useState(null); // Store the ID of the user to chat with
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -35,30 +39,67 @@ const OffersDetail = ({ userId, productId, onClose }) => {
     if (userId) fetchOffers();
   }, [userId]);
 
-  const handleAccept = async (offerId) => {
-    try {
-      await axios.post('http://localhost:3001/offers/accept', { offerId });
-      setReceivedOffers((prevOffers) => 
-        prevOffers.map((offer) =>
-          offer.id === offerId ? { ...offer, status: 'ACCEPTED' } : offer
-        )
-      );
-    } catch (error) {
-      console.error('Error accepting offer:', error);
-    }
+  const handleAccept = (offerId) => {
+    confirm({
+      title: 'Confirm Acceptance',
+      icon: <ExclamationCircleOutlined />,
+      content: 'คุณต้องการจะยอมรับข้อเสนอนี้ไหม?',
+      okText: 'ใช่',
+      okType: 'primary',
+      cancelText: 'ไม่ใช่',
+      onOk: async () => {
+        try {
+          // Make API call to accept offer
+          await axios.post('http://localhost:3001/offers/accept', { offerId });
+  
+          // Update offers state
+          setReceivedOffers((prevOffers) =>
+            prevOffers.map((offer) =>
+              offer.id === offerId ? { ...offer, status: 'ACCEPTED' } : offer
+            )
+          );
+  
+          // Success message
+          message.success('Offer accepted successfully!');
+        } catch (error) {
+          console.error('Error accepting offer:', error);
+  
+          // Error message
+          message.error('Failed to accept the offer. Please try again.');
+        }
+      },
+      onCancel: () => {
+        message.info('Offer acceptance cancelled.');
+      },
+    });
   };
 
-  const handleReject = async (offerId) => {
-    try {
-      await axios.post('http://localhost:3001/offers/reject', { offerId });
-      setReceivedOffers((prevOffers) =>
-        prevOffers.map((offer) =>
-          offer.id === offerId ? { ...offer, status: 'REJECTED' } : offer
-        )
-      );
-    } catch (error) {
-      console.error('Error rejecting offer:', error);
-    }
+  const handleReject = (offerId) => {
+    confirm({
+      title: 'Confirm Rejection',
+      icon: <ExclamationCircleOutlined />,
+      content: 'คุณต้องการจะปฏิเสธข้อเสนอนี้ไหม?',
+      okText: 'ใข่',
+      okType: 'danger',
+      cancelText: 'ไม่ใช่',
+      onOk: async () => {
+        try {
+          await axios.post('http://localhost:3001/offers/reject', { offerId });
+          setReceivedOffers((prevOffers) =>
+            prevOffers.map((offer) =>
+              offer.id === offerId ? { ...offer, status: 'REJECTED' } : offer
+            )
+          );
+          message.success('Offer rejected successfully!');
+        } catch (error) {
+          console.error('Error rejecting offer:', error);
+          message.error('Failed to reject the offer. Please try again.');
+        }
+      },
+      onCancel: () => {
+        message.info('Offer rejection cancelled.');
+      },
+    });
   };
 
   const handleDeliveryTypeUpdate = async (offerId, deliveryType) => {
@@ -93,6 +134,7 @@ const OffersDetail = ({ userId, productId, onClose }) => {
   
       const data = await response.json();
       console.log('Product marked as completed:', data);
+      setIsCompleted(true);  // Update the state to trigger a re-render
     } catch (error) {
       console.error('Error:', error);
     }
@@ -114,16 +156,27 @@ const OffersDetail = ({ userId, productId, onClose }) => {
     setActiveChatProductId(null); // Reset the active productId for chat
   };
 
-  const confirmAction = (message, callback) => {
-    const isConfirmed = window.confirm(message);
-    if (isConfirmed) {
-      callback();
-    }
+  const confirmAction = (content, onConfirm) => {
+    confirm({
+      title: 'ยืนยันการเลือก',
+      icon: <ExclamationCircleOutlined />,
+      content: content,
+      okText: 'ใช่',
+      cancelText: 'ไม่ใช่',
+      onOk: async () => {
+        try {
+          await onConfirm(); // Execute the action passed
+          message.success('ดำเนินการสำเร็จ!');
+        } catch (error) {
+          console.error('Error executing action:', error);
+          message.error('เกิดข้อผิดพลาดในการดำเนินการ');
+        }
+      },
+      onCancel: () => {
+        message.info('การดำเนินการถูกยกเลิก');
+      },
+    });
   };
-
-  if (loading) {
-    return <div>Loading offers...</div>;
-  }
 
   return (
     <div className="offers-detail">
@@ -200,8 +253,9 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                           <button
                             className="btn"
                             onClick={() =>
-                              confirmAction('คุณต้องการเลือกการจัดส่งแบบตัวต่อตัวหรือไม่?', () =>
-                                handleDeliveryTypeUpdate(offer.id, 'IN_PERSON')
+                              confirmAction(
+                                'คุณต้องการเลือกการจัดส่งแบบตัวต่อตัวหรือไม่?',
+                                () => handleDeliveryTypeUpdate(offer.id, 'IN_PERSON')
                               )
                             }
                           >
@@ -210,8 +264,9 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                           <button
                             className="btn"
                             onClick={() =>
-                              confirmAction('คุณต้องการเลือกการจัดส่งแบบไปรษณีหรือไม่?', () =>
-                                handleDeliveryTypeUpdate(offer.id, 'REMOTE')
+                              confirmAction(
+                                'คุณต้องการเลือกการจัดส่งแบบไปรษณีหรือไม่?',
+                                () => handleDeliveryTypeUpdate(offer.id, 'REMOTE')
                               )
                             }
                           >
@@ -226,12 +281,15 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                             onClick={() =>
                               confirmAction(
                                 'คุณต้องการยืนยันว่าคุณได้รับของแล้วหรือไม่?', 
-                                () => handleMarkAsCompleted(offer.product.id) 
+                                () => handleMarkAsCompleted(offer.product.id)
                               )
                             }
                           >
-                            {offer.product.status === 'complete' ? 'แลกสำเร็จ' : 'ยืนยันว่าได้รับของแล้ว'}
+                            {isCompleted || offer.product.status === 'complete' 
+                              ? 'แลกสำเร็จ' 
+                              : 'ยืนยันว่าได้รับของแล้ว'}
                           </button>
+
                         </div>
                       )}
                     </div>
@@ -281,17 +339,29 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
                     สถานะข้อเสนอ: {offer.status}
                   </div>
-                  {offer.status === 'PENDING' && (
-                    <div className="offer-actions">
-                      <button onClick={() => handleAccept(offer.id)}>ยอมรับ</button>
-                      <button onClick={() => handleReject(offer.id)}>ปฏิเสธ</button>
-                    </div>
-                  )}
+                  
                   {offer.status === 'ACCEPTED' && (
                     <div className="chat-actions">
                       <button onClick={() => openChat(offer)}>แชท</button>
+                  {offer.deliveryType && (
+                        <div>
+                          <button
+                            className="btn-complete"
+                            onClick={() =>
+                              confirmAction(
+                                'คุณต้องการยืนยันว่าคุณได้รับของแล้วหรือไม่?', 
+                                () => handleMarkAsCompleted(offer.product.id)
+                              )
+                            }
+                          >
+                            {isCompleted || offer.product.status === 'complete' 
+                              ? 'แลกสำเร็จ' 
+                              : 'ยืนยันว่าได้รับของแล้ว'}
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  )}
+                    )}
                 </li>
               ))}
             </ul>

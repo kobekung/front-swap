@@ -139,7 +139,7 @@ const ProductForm = ({ userId, onClose }) => {
                     />
                 </div>
 
-                <div className="form-group">
+                <div className="form-group" style={{ display: 'none' }}>
                     <label htmlFor="status">Status:</label>
                     <select
                         id="status"

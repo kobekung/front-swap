@@ -6,6 +6,9 @@ import '../css/MainPage.css';
 import FollowersSection from '../components/FollowersSection';
 import Sidebar from '../components/Sidebar';
 import ProductsSection from '../components/ProductsSection';
+import { Modal, message,Input } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import confirm from 'antd/es/modal/confirm';
 
 const MainPage = () => {
   const { id } = useParams();
@@ -126,42 +129,70 @@ const MainPage = () => {
   };
 
   const handleReportProduct = async (productId) => {
-    const reason = prompt("Please enter the reason for reporting this product:");
-    if (!reason) {
-      alert("Report cancelled. Reason is required.");
-      return;
-    }
-  
-    const details = prompt("Optional: Provide additional details (or leave blank):");
-  
-    try {
-      const response = await axios.post(`http://localhost:3001/reports`, {
-        productId,  // Include the productId in the request
-        userId: user.id,  // Assuming user.id is available in your context or state
-        reason,
-        details,
-      });
-  
-      alert("Product reported successfully!");
-    } catch (error) {
-      alert(error.response?.data?.message || "Failed to report the product.");
-    }
+    const { confirm } = Modal;
+    let details;
+    confirm({
+      title: 'รายงานสินค้า',
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <div>
+          กรุณากรอกเหตุผลในการรายงานสินค้านี้:
+          <Input.TextArea placeholder="เหตุผล" />
+          <br />
+          <br />
+          ระบุรายละเอียดเพิ่มเติม (ถ้ามี):
+          <Input.TextArea placeholder="รายละเอียด" onChange={(e) => details = e.target.value} />
+        </div>
+      ),
+      okText: 'Report',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        const reason = document.querySelector('textarea').value;
+        if (!reason) {
+          message.error('Reason is required');
+          return;
+        }
+        try {
+          const response = await axios.post(`http://localhost:3001/reports`, {
+            productId,  // Include the productId in the request
+            userId: user.id,  // Assuming user.id is available in your context or state
+            reason,
+            details,
+          });
+          message.success('รายงานสินค้าสำเร็จ!');
+        } catch (error) {
+          message.error(error.response?.data?.message || "ไม่สามารถรายงานสินค้าได้");
+        }
+      },
+    });
   };
+  const { confirm } = Modal;
   
-  
-
-  const handleDeleteProduct = async (productId) => {
-    try {
-      await axios.delete(`http://localhost:3001/products/${productId}`);
-      setProducts(products.filter(product => product.id !== productId));
-      setFilteredProducts(filteredProducts.filter(product => product.id !== productId)); // Update filtered products
-      alert('Product deleted successfully');
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    }
+  const handleDeleteProduct = (productId) => {
+    confirm({
+      title: 'Confirm delete',
+      icon: <ExclamationCircleOutlined />,
+      content: 'คุณต้องการลบสินค้านี้ไหม?',
+      okText: 'ใช่', 
+      okType: 'danger', 
+      cancelText: 'ไม่ใช่',
+      cancelType: 'danger', 
+      onOk: async () => {
+        try {
+          await axios.delete(`http://localhost:3001/products/${productId}`);
+          setProducts(products.filter((product) => product.id !== productId));
+          setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
+          message.success('Product deleted successfully');
+        } catch (error) {
+          console.error('Error deleting product:', error);
+          message.error('Failed to delete product');
+        }
+      },
+      onCancel: () => {
+        message.info('Deletion cancelled');
+      },
+    });
   };
-
-  
 
   const handleCategoryChange = (event) => {
     const categoryId = parseInt(event.target.value, 10);

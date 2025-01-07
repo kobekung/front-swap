@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Modal } from 'antd';
 import { useNavigate } from "react-router-dom";
 import '../css/Admin.css';
 
@@ -55,20 +56,28 @@ const Admin = () => {
   };
 
   const handleDeleteProduct = async (productId) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      try {
-        // Call the delete API to remove the product by its ID
-        await axios.delete(`http://localhost:3001/products/${productId}`);
-        setSuccess("Product deleted successfully!");
-        setReports((prevReports) =>
-          prevReports.filter((report) => report.product.id !== productId) // Remove the deleted product's report from the list
-        );
-      } catch (error) {
-        setError("Product deleted successfully!.");
-        console.error("Error deleting product:", error);
-      }
-    }
+    Modal.confirm({
+      title: 'คุณต้องการลบสินค้านี้ไหม?',
+      content: 'This action cannot be undone.',
+      onOk: async () => {
+        try {
+          // Call the delete API to remove the product by its ID
+          await axios.delete(`http://localhost:3001/products/${productId}`);
+          setSuccess("Product deleted successfully!");
+          setReports((prevReports) =>
+            prevReports.filter((report) => report.product.id !== productId) // Remove the deleted product's report from the list
+          );
+        } catch (error) {
+          setError("Error deleting product!");
+          console.error("Error deleting product:", error);
+        }
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
   };
+  
   useEffect(() => {
     if (currentSection === "banList") {
       const fetchBanList = async () => {
@@ -138,14 +147,19 @@ const Admin = () => {
               <ul>
                 {reports.map((report) => (
                   <li key={report.id}>
-                    <p><strong>หัวข้อรายงาน:</strong> {report.reason}</p>
-                    <p><strong>รายระเอียดการรายงาน:</strong> {report.details || "No additional details"}</p>
-                    <p><strong>สถานะ:</strong> {report.status}</p>
-                    <p><strong>รายงานโดย:</strong> {report.user.firstName} {report.user.lastName}</p>
-                    <p><strong>สินค้า:</strong> {report.product.name}</p>
-                    <button onClick={() => handleDeleteProduct(report.product.id)}>
-                      Delete Product
-                    </button>
+                    <div className="report-content">
+                      <p><strong>หัวข้อรายงาน:</strong> {report.reason}</p>
+                      <p><strong>รายระเอียดการรายงาน:</strong> {report.details || "No additional details"}</p>
+                      <p><strong>สถานะ:</strong> {report.status}</p>
+                      <p><strong>รายงานโดย:</strong> {report.user.firstName} {report.user.lastName}</p>
+                      <p><strong>สินค้า:</strong> {report.product.name}</p>
+                      <button onClick={() => handleDeleteProduct(report.product.id)}>
+                        Delete Product
+                      </button>
+                    </div>
+                    <div className="product-image-re">
+                      <img src={report.product.image} alt={report.product.name} />
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -155,6 +169,7 @@ const Admin = () => {
             {error && <p style={{ color: "red" }}>{error}</p>}
           </div>
         )}
+
 
         {currentSection === "reportUser" && (
           <div className="user-report-section">
