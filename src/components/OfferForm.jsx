@@ -1,57 +1,40 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Input, Button, message, Form, Upload, InputNumber } from 'antd';
+import { Modal, Form, Input, InputNumber, Upload, Button, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import '../css/OfferForm.css'; // Ensure you're using the existing CSS
+import axios from 'axios';
 
 const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
-  const [offerDetails, setOfferDetails] = useState({
-    name: '',
-    description: '',
-    price: '',
-    image: '',
-    status: 'pending',
-  });
-  const [imageFile, setImageFile] = useState(null);
+  const [form] = Form.useForm();
+  const [uploading, setUploading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setOfferDetails({ ...offerDetails, [name]: value });
-  };
-
-  const handleFileChange = (info) => {
-    if (info.file.status === 'done') {
-      setImageFile(info.file.originFileObj);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Confirmation before submitting
+  const handleSubmit = async (values) => {
     const confirmSubmit = window.confirm('Are you sure you want to submit this offer?');
     if (!confirmSubmit) return;
 
     try {
       let imageUrl = '';
 
-      if (imageFile) {
+      if (values.image?.file) {
+        setUploading(true);
         const formData = new FormData();
-        formData.append('file', imageFile);
+        formData.append('file', values.image.file);
 
-        const uploadResponse = await axios.post('http://localhost:3001/offers/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+        const uploadResponse = await axios.post(
+          'http://localhost:3001/offers/upload',
+          formData,
+          { headers: { 'Content-Type': 'multipart/form-data' } }
+        );
 
         imageUrl = uploadResponse.data.url;
+        setUploading(false);
       }
 
       const offerData = {
-        ...offerDetails,
+        name: values.name,
+        description: values.description,
+        price: parseFloat(values.price),
         status: 'PENDING',
-        price: parseFloat(offerDetails.price),
         from_user_id: parseInt(fromUserId, 10),
         to_user_id: parseInt(toUserId, 10),
         product_id: parseInt(productId, 10),
@@ -59,80 +42,90 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
       };
 
       await axios.post('http://localhost:3001/offers/create', offerData);
+      setSuccessMessage('Offer sent successfully!');
       message.success('Offer sent successfully!');
-      setOfferDetails({
-        name: '',
-        description: '',
-        price: '',
-        status: 'pending',
-        image: '',
-      });
-      setImageFile(null);
+      form.resetFields();
 
       setTimeout(() => {
+        setSuccessMessage('');
         onClose();
-      }, 3000);
+      }, 2000);
     } catch (error) {
-      console.error('Error creating offer:', error.response.data);
+      console.error('Error creating offer:', error.response?.data || error);
       message.error('Failed to create offer.');
+      setUploading(false);
     }
   };
 
   return (
-    <div className="offer-form-popup">
-      <div className="offer-form-content">
-        <h2>Create Offer</h2>
-        <Form onSubmit={handleSubmit}>
-          <Form.Item label="Offer Name" required>
-            <Input
-              name="name"
-              value={offerDetails.name}
-              onChange={handleChange}
-              placeholder="Enter offer name"
-            />
-          </Form.Item>
+    <Modal
+      title="Create Offer"
+      visible={true}
+      onCancel={onClose}
+      footer={null}
+    >
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+        initialValues={{ status: 'PENDING' }}
+      >
+        <Form.Item
+          label="Offer Name"
+          name="name"
+          rules={[{ required: true, message: 'Please input the offer name!' }]}
+        >
+          <Input />
+        </Form.Item>
 
-          <Form.Item label="Description" required>
-            <Input.TextArea
-              name="description"
-              value={offerDetails.description}
-              onChange={handleChange}
-              placeholder="Enter offer description"
-            />
-          </Form.Item>
+        <Form.Item
+          label="Description"
+          name="description"
+          rules={[{ required: true, message: 'Please input the description!' }]}
+        >
+          <Input.TextArea rows={4} />
+        </Form.Item>
 
-          <Form.Item label="Price" required>
-            <InputNumber
-              name="price"
-              value={offerDetails.price}
-              onChange={(value) => setOfferDetails({ ...offerDetails, price: value })}
-              min={0}
-              placeholder="Enter price"
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
+        <Form.Item
+          label="Price"
+          name="price"
+          rules={[{ required: true, message: 'Please input the price!' }]}
+        >
+          <InputNumber
+            min={0}
+            style={{ width: '100%' }}
+            formatter={(value) => `$ ${value}`}
+            parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+          />
+        </Form.Item>
 
-          <Form.Item label="Image Upload">
-            <Upload
-              name="image"
-              listType="picture"
-              onChange={handleFileChange}
-              beforeUpload={() => false} // Prevent automatic upload
-              showUploadList={false}
-            >
-              <Button icon={<UploadOutlined />}>Select Image</Button>
-            </Upload>
-          </Form.Item>
+        <Form.Item
+          label="Image Upload"
+          name="image"
+          valuePropName="file"
+        >
+          <Upload
+            listType="picture"
+            maxCount={1}
+            beforeUpload={() => false} // Prevent automatic upload
+          >
+            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+          </Upload>
+        </Form.Item>
 
-          <div className="form-buttons">
-            <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
-              Submit Offer
-            </Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </div>
-        </Form>
-      </div>
-    </div>
+        <div style={{ textAlign: 'right' }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={uploading}
+            style={{ marginRight: '10px' }}
+          >
+            Submit Offer
+          </Button>
+          <Button onClick={onClose}>Cancel</Button>
+        </div>
+      </Form>
+    </Modal>
   );
 };
 

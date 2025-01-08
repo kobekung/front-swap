@@ -1,8 +1,11 @@
-// src/components/ProductsSection.js
 import React from 'react';
+import { Card, Dropdown, Menu, Button, Avatar, Input, Modal, Tag } from 'antd';
+import { EllipsisOutlined, CommentOutlined, SwapOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import ProductForm from './ProductForm';
 import OfferForm from './OfferForm';
 import OffersDetail from './OfferDetails';
+
+const { confirm } = Modal;
 
 const ProductsSection = ({ 
   user, 
@@ -23,23 +26,42 @@ const ProductsSection = ({
   handleProductClick,
   handleProfileClick
 }) => {
+  
+  const handleDeleteConfirm = (productId) => {
+    confirm({
+      title: 'คุณต้องการลบโพสต์นี้หรือไม่?',
+      icon: <ExclamationCircleOutlined />,
+      content: 'การลบโพสต์ไม่สามารถยกเลิกได้',
+      okText: 'ยืนยัน',
+      okType: 'danger',
+      cancelText: 'ยกเลิก',
+      onOk() {
+        handleDeleteProduct(productId);
+      },
+    });
+  };
+
+  const renderDropdownMenu = (product) => (
+    <Menu>
+      <Menu.Item onClick={() => handleReportProduct(product.id)}>รายงานโพสต์</Menu.Item>
+      {user.id === product.user.id && (
+        <Menu.Item onClick={() => handleDeleteConfirm(product.id)}>ลบโพสต์</Menu.Item>
+      )}
+    </Menu>
+  );
+
   return (
     <div className="products-section">
       {showProductForm && <ProductForm userId={user.id} onClose={toggleProductForm} />}
 
       <div className="post-area">
         <div className="post-input">
-          <img 
-            src={user.profilePicture || '/default-profile.png'} 
-            alt="Profile" 
-            className="profile-image" 
-          />
-          <input 
+          <Avatar src={user.profilePicture || '/default-profile.png'} size="large" />
+          <Input
             onClick={toggleProductForm}
-            style={{ cursor: 'pointer' }}
-            type="text" 
-            placeholder={`ต้องการโพสต์สินค้าไหม, ${user.firstName}?`} 
-            readOnly 
+            placeholder={`ต้องการโพสต์สินค้าไหม, ${user.firstName}?`}
+            readOnly
+            style={{ cursor: 'pointer', marginLeft: '10px' }}
           />
         </div>
       </div>
@@ -47,62 +69,77 @@ const ProductsSection = ({
       {filteredProducts
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // เรียงลำดับจากใหม่ไปเก่า
         .map((product) => (
-          <div className="product-card" key={product.id}>
-            <div className="dropdown-menu">
-              <button 
-                className="dropdown-btn" 
-                onClick={() => setDropdownProductId(dropdownProductId === product.id ? null : product.id)}
+          <Card
+            key={product.id}
+            hoverable
+            style={{ margin: '16px 0' }}
+            cover={
+              <img 
+                src={product.image || '/default-product.png'} 
+                alt={product.name} 
+                onClick={() => handleProductClick(product.id)}
+                style={{ cursor: 'pointer', width: '300px', height: '300px', objectFit: 'cover', display: 'block', margin: '0 auto' }}
+              />
+            }
+            actions={[
+              <Button
+                icon={<CommentOutlined />}
+                onClick={() => handleProductClick(product.id)}
+                type="link"
               >
-                ⋮
-              </button>
-              {dropdownProductId === product.id && (
-                <div className="dropdown-content">
-                  <button onClick={() => handleReportProduct(product.id)}>Report</button>
-                  {user.id === product.user.id && (
-                    <button onClick={() => handleDeleteProduct(product.id)}>Delete</button>
-                  )}
-                </div>
-              )}
-            </div>
-            <div className="product-name">{product.name}</div>
-            <div className="product-owner">
-              {new Date(product.createdAt).toLocaleString()}
-              {product.user ? (
-                <div className="owner-info">
-                  <img 
-                    src={product.user.profilePicture || '/default-profile.png'} 
-                    alt={product.user.firstName}
-                    className="owner-image"
-                    onClick={() => handleProfileClick(product.user.id)}
-                  />
-                  <span className="owner-name">{product.user.firstName}</span>
-                  <span className={`product-status ${product.status.toLowerCase()}`}>{product.status}</span>
-                  <span className="product-name">{product.name}</span>
-                </div>
-              ) : 'Unknown'}
-            </div>
-            <img 
-              src={product.image || '/default-product.png'}
-              alt={product.name} 
-              className="product-image"
-              onClick={() => handleProductClick(product.id)} // Handle product click
+                คอมเมนต์
+              </Button>,
+              user.id !== product.user.id ? (
+                <Button
+                  icon={<SwapOutlined />}
+                  onClick={() => handleExchangeClick(product)}
+                  type="link"
+                >
+                  เสนอแลก
+                </Button>
+              ) : (
+                <Button
+                  icon={<SwapOutlined />}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    alert('ไม่สามารถแลกกับสินค้าตัวเองได้!');
+                  }}
+                  type="link"
+                  disabled
+                >
+                  แลกเปลี่ยน
+                </Button>
+              ),
+            ]}
+            extra={
+              <Dropdown overlay={renderDropdownMenu(product)} trigger={['click']}>
+                <EllipsisOutlined style={{ fontSize: '20px', cursor: 'pointer' }} />
+              </Dropdown>
+            }
+          >
+            <Card.Meta
+              avatar={
+                <Avatar
+                  src={product.user?.profilePicture || '/default-profile.png'}
+                  onClick={() => handleProfileClick(product.user.id)}
+                  style={{ cursor: 'pointer' }}
+                />
+              }
+              title={product.name}
+              description={
+                <>
+                  <div>{new Date(product.createdAt).toLocaleString()}</div>
+                  <div>
+                    <Tag color={product.status === 'available' ? 'green' : 'red'}>
+                      {product.status === 'available' ? 'พร้อมแลก' : 'แลกแล้ว'}
+                    </Tag>
+                  </div>
+                  <div>ราคาประเมิน: {product.price} บาท</div>
+                </>
+              }
             />
-            <div className="product-actions">
-              <button className="comment-btn" onClick={() => handleProductClick(product.id)}>Comment</button>
-              <span>ราคาประเมิน {product.price} บาท</span>
-              {user.id !== product.user.id && (
-                <button className="exchange-btn" onClick={() => handleExchangeClick(product)}>Exchange</button>
-              )}
-              {user.id === product.user.id && (
-                <button className="exchange-btn" onClick={(e) => {
-                  e.preventDefault();
-                  alert('ไม่สามารถแลกกับสินค้าตัวเองได้!');
-                }}>Exchange</button>
-              )}
-            </div>
-          </div>
+          </Card>
         ))}
-
 
       {showOfferForm && selectedProduct && (
         <OfferForm 
@@ -113,7 +150,7 @@ const ProductsSection = ({
         />
       )}
 
-      {showOffersDetail &&  (
+      {showOffersDetail && (
         <OffersDetail 
           userId={user.id} 
           productId={user.productId}
