@@ -76,7 +76,7 @@ const ProductDetail = () => {
     <div className="product-detail-modal">
       <div className="modal-content">
         <Button type="text" onClick={handleClose} style={{ marginBottom: 16 }}>
-          Back
+          ย้อนกลับ
         </Button>
         <h2>{product?.name}</h2>
         <img
@@ -85,21 +85,21 @@ const ProductDetail = () => {
           className="product-detail-image"
         />
         <div className="product-detail-info">
-          <p><span>Description:</span> {product?.description}</p>
-          <p><span>Price:</span> {product?.price}</p>
-          <p><span>Status:</span> {product?.status}</p>
-          <p><span>Posted by:</span> {user ? `${user.firstName} ${user.lastName}` : 'Unknown'}</p>
+          <p><span>รายละเอียดสินค้า:</span> {product?.description}</p>
+          <p><span>ราคาประเมิน:</span> {product?.price}</p>
+          <p><span>สถานะสินค้า:</span> {product?.status}</p>
+          <p><span>โพสต์สินค้าโดย:</span> {user ? `${user.firstName} ${user.lastName}` : 'Unknown'}</p>
         </div>
 
         <div className="product-detail-actions">
           <Button type="primary" onClick={() => handleExchangeClick(product)}>
-            Exchange
+            เสนอแลก
           </Button>
         </div>
 
         {/* Comments Section */}
         <div className="comments-section">
-          <h3>Comments</h3>
+          <h3>คอมเมนต์</h3>
           <TextArea
             className="comment-textarea"
             value={commentText}
@@ -108,7 +108,7 @@ const ProductDetail = () => {
             rows={4}
           />
           <Button type="primary" onClick={handleAddComment}>
-            Add Comment
+            เพิ่มคอมเมนต์
           </Button>
 
           <List

@@ -57,7 +57,7 @@ const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle 
       }}
     >
       <Form.Item
-        label="First Name"
+        label="ชื่อจริง"
         name="firstName"
         rules={[{ required: true, message: 'Please enter your first name!' }]}
       >
@@ -70,7 +70,7 @@ const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle 
       </Form.Item>
 
       <Form.Item
-        label="Last Name"
+        label="นามสกุล"
         name="lastName"
         rules={[{ required: true, message: 'Please enter your last name!' }]}
       >
@@ -83,7 +83,7 @@ const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle 
       </Form.Item>
 
       <Form.Item
-        label="Nickname"
+        label="ชื่อเล่น"
         name="nickname"
       >
         <Input
@@ -95,7 +95,7 @@ const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle 
       </Form.Item>
 
       <Form.Item
-        label="Phone Number"
+        label="เบอร์โทรศัพท์"
         name="phoneNumber"
       >
         <Input
@@ -107,7 +107,7 @@ const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle 
       </Form.Item>
 
       <Form.Item
-        label="Address"
+        label="ที่อยู่"
         name="address"
       >
         <Input
@@ -119,7 +119,7 @@ const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle 
       </Form.Item>
 
       <Form.Item
-        label="Profile Picture"
+        label="รูปโปรไฟล์"
         name="profilePicture"
       >
         <Upload
@@ -127,7 +127,7 @@ const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle 
           showUploadList={false} // Hide the default upload list
           accept="image/*"
         >
-          <Button icon={<UploadOutlined />}>Upload Profile Picture</Button>
+          <Button icon={<UploadOutlined />}>อัพโหลด</Button>
         </Upload>
       </Form.Item>
 

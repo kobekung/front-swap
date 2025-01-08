@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, message } from 'antd';
 import axios from 'axios';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, List, Avatar, Card, Modal, message } from 'antd';
+import {  CloseOutlined, MessageOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+
 import '../css/OffersDetail.css'; // Ensure the path is correct
 import Chat from '../pages/ChatPage'; // Import the Chat component
 const { confirm } = Modal;
@@ -180,21 +182,29 @@ const OffersDetail = ({ userId, productId, onClose }) => {
 
   return (
     <div className="offers-detail">
-      <button className="close-btn" onClick={onClose}>×</button>
+      <button className="close-btn" onClick={onClose}>
+        <CloseOutlined />
+      </button>
       <h2>ข้อเสนอของคุณ</h2>
       {error && <div className="error-message">{error}</div>}
 
       {/* Buttons to toggle between Received and Sent Offers */}
       <div className="offer-toggle-buttons">
         <button
+          style={{
+            backgroundColor: view === 'received' ? '#007bff' : '#fff',
+            color: view === 'received' ? '#fff' : '#333',
+          }}
           onClick={() => setView('received')}
-          className={view === 'received' ? 'active' : ''}
         >
           ข้อเสนอที่ได้รับ
         </button>
         <button
+          style={{
+            backgroundColor: view === 'sent' ? '#007bff' : '#fff',
+            color: view === 'sent' ? '#fff' : '#333',
+          }}
           onClick={() => setView('sent')}
-          className={view === 'sent' ? 'active' : ''}
         >
           ข้อเสนอที่คุณส่ง
         </button>
@@ -241,17 +251,27 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                   </div>
                   {offer.status === 'PENDING' && (
                     <div className="offer-actions">
-                      <button onClick={() => handleAccept(offer.id)}>ยอมรับ</button>
-                      <button onClick={() => handleReject(offer.id)}>ปฏิเสธ</button>
+                      <Button onClick={() => handleAccept(offer.id)} icon={<CheckCircleOutlined />} style={{ color: 'green' }}>
+                        ยอมรับ
+                      </Button>
+                      <Button onClick={() => handleReject(offer.id)} icon={<CloseCircleOutlined />} style={{ color: 'red' }}>
+                        ปฏิเสธ
+                      </Button>
                     </div>
                   )}
                   {offer.status === 'ACCEPTED' && (
                     <div className="chat-actions">
-                      <button onClick={() => openChat(offer)}>แชท</button>
+                      <Button 
+                        onClick={() => openChat(offer)} 
+                        icon={<MessageOutlined />} 
+                        style={{ color: 'blue' }}
+                      >
+                        แชท
+                      </Button>
                       {!offer.deliveryType && ( // Only show the delivery buttons if no delivery type is selected
                         <div className="button-container">
-                          <button
-                            className="btn"
+                          <Button
+                            style={{ backgroundColor: '#87d068', borderColor: '#87d068', color: 'white' }}
                             onClick={() =>
                               confirmAction(
                                 'คุณต้องการเลือกการจัดส่งแบบตัวต่อตัวหรือไม่?',
@@ -260,9 +280,9 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                             }
                           >
                             ตัวต่อตัว
-                          </button>
-                          <button
-                            className="btn"
+                          </Button>
+                          <Button
+                            style={{ backgroundColor: '#108ee9', borderColor: '#108ee9', color: 'white' }}
                             onClick={() =>
                               confirmAction(
                                 'คุณต้องการเลือกการจัดส่งแบบไปรษณีหรือไม่?',
@@ -271,25 +291,25 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                             }
                           >
                             ไปรษณี
-                          </button>
+                          </Button>
                         </div>
                       )}
                       {offer.deliveryType && (
                         <div>
-                          <button
-                            className="btn-complete"
+                          <Button
+                            type="primary"
                             onClick={() =>
                               confirmAction(
                                 'คุณต้องการยืนยันว่าคุณได้รับของแล้วหรือไม่?', 
                                 () => handleMarkAsCompleted(offer.product.id)
                               )
                             }
+                            disabled={offer.product.status === 'complete'}
                           >
                             {isCompleted || offer.product.status === 'complete' 
                               ? 'แลกสำเร็จ' 
                               : 'ยืนยันว่าได้รับของแล้ว'}
-                          </button>
-
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -339,29 +359,35 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
                     สถานะข้อเสนอ: {offer.status}
                   </div>
-                  
+
                   {offer.status === 'ACCEPTED' && (
                     <div className="chat-actions">
-                      <button onClick={() => openChat(offer)}>แชท</button>
-                  {offer.deliveryType && (
+                      <Button 
+                        onClick={() => openChat(offer)} 
+                        icon={<MessageOutlined />} 
+                        style={{ color: 'blue' }}
+                      >
+                        แชท
+                      </Button>
+                      {offer.deliveryType && (
                         <div>
-                          <button
-                            className="btn-complete"
+                          <Button
+                            type="primary"
                             onClick={() =>
                               confirmAction(
                                 'คุณต้องการยืนยันว่าคุณได้รับของแล้วหรือไม่?', 
                                 () => handleMarkAsCompleted(offer.product.id)
                               )
-                            }
+                            }disabled={offer.product.status === 'complete'}
                           >
                             {isCompleted || offer.product.status === 'complete' 
                               ? 'แลกสำเร็จ' 
                               : 'ยืนยันว่าได้รับของแล้ว'}
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
-                    )}
+                  )}
                 </li>
               ))}
             </ul>
@@ -380,5 +406,6 @@ const OffersDetail = ({ userId, productId, onClose }) => {
     </div>
   );
 };
+
 
 export default OffersDetail;

@@ -159,13 +159,13 @@ const ProfilePage = () => {
             <h2>{user.nickname}</h2>
             <div className="profile-actions">
               {currentUserId && currentUserId === id && (
-                <Button variant="primary" onClick={handleEditToggle}>Edit Profile</Button>
+                <Button variant="primary" onClick={handleEditToggle}>แก้ไขโปรไฟล์</Button>
               )}
               {currentUserId && currentUserId !== id && (
                 isFollowing ? (
-                  <Button variant="danger" onClick={handleUnfollow}>Unfollow</Button>
+                  <Button variant="danger" onClick={handleUnfollow}>ยกเลิกติดตาม</Button>
                 ) : (
-                  <Button variant="primary" onClick={handleFollow}>Follow</Button>
+                  <Button variant="primary" onClick={handleFollow}>ติดตาม</Button>
                 )
               )}
             </div>
@@ -194,16 +194,16 @@ const ProfilePage = () => {
           />
         ) : (
           <>
-            <p>Email: {user.email}</p>
-            <p>Phone: {user.phoneNumber}</p>
-            <p>Address: {user.address}</p>
-            <Button variant="secondary" onClick={handleBack}>Back</Button>
+            <p>อีเมล: {user.email}</p>
+            <p>เบอร์โทร: {user.phoneNumber}</p>
+            <p>ที่อยู่: {user.address}</p>
+            <Button variant="secondary" onClick={handleBack}>ย้อนกลับ</Button>
           </>
         )}
       </div>
 
       <div className="profile-products-section">
-        <h2>Products Posted by {user.firstName}</h2>
+        <h2>โพสต์สินค้าโดย {user.firstName}</h2>
         {products.length > 0 ? (
           products.map((product) => (
             <div className="profile-product-card" key={product.id} onClick={() => handleProductClick(product.id)}>
@@ -215,13 +215,13 @@ const ProfilePage = () => {
               <div className="profile-product-info">
                 <h3 className="profile-product-name">{product.name}</h3>
                 <span className="profile-product-status" style={{ backgroundColor: getStatusColor(product.status) }}>
-                  {product.status}
+                {product.status === 'available' ? 'พร้อมแลก' : 'แลกแล้ว'}
                 </span>
               </div>
             </div>
           ))
         ) : (
-          <p>No products posted.</p>
+          <p>ไม่มีสินค้า.</p>
         )}
       </div>
     </div>
