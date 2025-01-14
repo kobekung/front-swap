@@ -9,7 +9,7 @@ const Header = ({ searchProduct, handleSearchChange, handleCategoryChange, categ
     <header className="header">
       <img
         className="logo"
-        src="https://cdn.gencraft.com/prod/user/40a3fc59-033c-422d-8852-277e603ed706/b7156f5d-fcd8-43e1-b972-fd2516e84059/image/image1_0.jpg?Expires=1726712452&Signature=Fk0FmdQh~4F6EEj5vfKe-2vsbtWzY7VodX10-NAzWoid~AhqakMOZl3STkz32q9TZgCcNcAo8ClEKKkumMND~raQQOjD7ecftC0olWIdtwzwouNxwX~ChHo49J6uopL7RUdv19hzoIoY8CHUDdv1fwOqPEGmQjjS1JdKOPZmF5WFNTcDoqqFDUFMQGgBAMq2gAWEvlxRF6yYaQPSBZkdNotbOiYE1DIRwqKAq3bMMEpuEdbgmTophvJeuHlPwzROyiENRIg2cJmpfRFlSQP~CtwHJYfr7J-Wl67pLcocEKT02qVDrAagaXzEl2mtHROKAaQ7sK-rFisXoWmDXd~~sw__&Key-Pair-Id=K3RDDB1TZ8BHT8"
+        src="https://images.scalebranding.com/stylish-cool-wolf-logo-b993bf0f-1bea-4f1f-8687-aa1a2f24c204.jpg"
         alt="Switch Swap"
       />
       <input

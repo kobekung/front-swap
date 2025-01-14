@@ -74,12 +74,15 @@ const ProductsSection = ({
             hoverable
             style={{ margin: '16px 0' }}
             cover={
-              <img 
-                src={product.image || '/default-product.png'} 
-                alt={product.name} 
-                onClick={() => handleProductClick(product.id)}
-                style={{ cursor: 'pointer', width: '300px', height: '300px', objectFit: 'cover', display: 'block', margin: '0 auto' }}
-              />
+              <div>
+                <img 
+                  src={product.image || '/default-product.png'} 
+                  alt={product.name} 
+                  onClick={() => handleProductClick(product.id)}
+                  style={{ cursor: 'pointer', width: '300px', height: '300px', objectFit: 'cover', display: 'block', margin: '0 auto' }}
+                />
+                <div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold', marginTop: '5px' }}>{product.name}</div>
+              </div>
             }
             actions={[
               <Button
@@ -125,7 +128,7 @@ const ProductsSection = ({
                   style={{ cursor: 'pointer' }}
                 />
               }
-              title={product.name}
+              title={product.user.nickname}
               description={
                 <>
                   <div>{new Date(product.createdAt).toLocaleString()}</div>

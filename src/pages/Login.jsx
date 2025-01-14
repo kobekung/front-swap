@@ -42,7 +42,7 @@ const Login = () => {
       {error && <Alert message={error} type="error" />}
 
       <Form
-        name="login"
+        name="เข้าสู่ระบบ"
         className="login-form"
         onFinish={handleSubmit}
         initialValues={formData}
@@ -50,7 +50,7 @@ const Login = () => {
         autoComplete="off"
       >
         <Form.Item
-          label="Email"
+          label="อีเมล"
           name="email"
           rules={[{ required: true, message: 'Please enter your email!' }]}
         >
@@ -59,13 +59,13 @@ const Login = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter your email"
+            placeholder="ใส่อีเมล"
             aria-label="Email"
           />
         </Form.Item>
 
         <Form.Item
-          label="Password"
+          label="รหัสผ่าน"
           name="password"
           rules={[{ required: true, message: 'Please enter your password!' }]}
         >
@@ -73,24 +73,24 @@ const Login = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Enter your password"
+            placeholder="ใส่รหัสผ่าน"
             aria-label="Password"
           />
         </Form.Item>
 
         <Form.Item>
-          <Checkbox defaultChecked>Remember me</Checkbox>
-          <a href="#!" className="forgot-password-link">Forgot password?</a>
+          <Checkbox defaultChecked>จดจำรหัสผ่าน</Checkbox>
+          <a href="#!" className="forgot-password-link">ลืมรหัสผ่าน?</a>
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
-            Sign in
+            เข้าสู่ระบบ
           </Button>
         </Form.Item>
 
         <div className="register-link">
-          Not a member? <a href="/register" className="register-link-anchor">Register here</a>
+          ไม่มีบัญชี? <a href="/register" className="register-link-anchor">สมัครสมาชิก</a>
         </div>
       </Form>
     </div>

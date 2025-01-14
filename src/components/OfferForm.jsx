@@ -59,7 +59,7 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
 
   return (
     <Modal
-      title="Create Offer"
+      title="สร้างข้อเสนอ"
       visible={true}
       onCancel={onClose}
       footer={null}
@@ -71,7 +71,7 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
         initialValues={{ status: 'PENDING' }}
       >
         <Form.Item
-          label="Offer Name"
+          label="ชื่อสินค้าที่จะเสนอ"
           name="name"
           rules={[{ required: true, message: 'Please input the offer name!' }]}
         >
@@ -79,7 +79,7 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
         </Form.Item>
 
         <Form.Item
-          label="Description"
+          label="รายระเอียดสินค้า"
           name="description"
           rules={[{ required: true, message: 'Please input the description!' }]}
         >
@@ -87,7 +87,7 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
         </Form.Item>
 
         <Form.Item
-          label="Price"
+          label="ราคาประเมิน"
           name="price"
           rules={[{ required: true, message: 'Please input the price!' }]}
         >
@@ -100,7 +100,7 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
         </Form.Item>
 
         <Form.Item
-          label="Image Upload"
+          label="รูปสินค้า"
           name="image"
           valuePropName="file"
         >
@@ -109,7 +109,7 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
             maxCount={1}
             beforeUpload={() => false} // Prevent automatic upload
           >
-            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            <Button icon={<UploadOutlined />}>เลือกรูปภาพ</Button>
           </Upload>
         </Form.Item>
 
@@ -120,9 +120,9 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
             loading={uploading}
             style={{ marginRight: '10px' }}
           >
-            Submit Offer
+            ส่งข้อเสนอ
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose}>ยกเลิก</Button>
         </div>
       </Form>
     </Modal>

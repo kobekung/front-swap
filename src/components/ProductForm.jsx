@@ -56,7 +56,7 @@ const ProductForm = ({ userId, onClose }) => {
             };
 
             await axios.post('http://localhost:3001/products/create', dataToSubmit);
-
+            
             message.success('Product created successfully!');
             setFileList([]);
             form.resetFields();
@@ -66,6 +66,7 @@ const ProductForm = ({ userId, onClose }) => {
             message.error('Failed to create product.');
         } finally {
             setLoading(false);
+            window.location.reload();
         }
     };
 

@@ -87,15 +87,18 @@ const ProductDetail = () => {
         <div className="product-detail-info">
           <p><span>รายละเอียดสินค้า:</span> {product?.description}</p>
           <p><span>ราคาประเมิน:</span> {product?.price}</p>
-          <p><span>สถานะสินค้า:</span> {product?.status}</p>
+          <p>
+            <span>สถานะสินค้า : </span>
+            {product?.status === 'available' ? 'พร้อมแลก' : 'แลกแล้ว'}
+          </p>
           <p><span>โพสต์สินค้าโดย:</span> {user ? `${user.firstName} ${user.lastName}` : 'Unknown'}</p>
         </div>
 
-        <div className="product-detail-actions">
+        {/* <div className="product-detail-actions">
           <Button type="primary" onClick={() => handleExchangeClick(product)}>
             เสนอแลก
           </Button>
-        </div>
+        </div> */}
 
         {/* Comments Section */}
         <div className="comments-section">

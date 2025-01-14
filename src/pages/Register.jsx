@@ -43,7 +43,7 @@ const Register = () => {
 
   return (
     <div className="register-container">
-      <h2>Register</h2>
+      <h2>สมัครสมาชิก</h2>
       <Form
         onFinish={handleSubmit}
         initialValues={formData}
@@ -51,7 +51,7 @@ const Register = () => {
         autoComplete="off"
       >
         <Form.Item
-          label="Email"
+          label="อีเมล"
           name="email"
           rules={[{ required: true, message: 'Please enter your email!' }]}
         >
@@ -65,7 +65,7 @@ const Register = () => {
         </Form.Item>
 
         <Form.Item
-          label="Password"
+          label="รหัสผ่าน"
           name="passwordHash"
           rules={[{ required: true, message: 'Please enter your password!' }]}
         >
@@ -78,7 +78,7 @@ const Register = () => {
         </Form.Item>
 
         <Form.Item
-          label="First Name"
+          label="ชื่อจริง"
           name="firstName"
           rules={[{ required: true, message: 'Please enter your first name!' }]}
         >
@@ -91,7 +91,7 @@ const Register = () => {
         </Form.Item>
 
         <Form.Item
-          label="Last Name"
+          label="นามสกุล"
           name="lastName"
           rules={[{ required: true, message: 'Please enter your last name!' }]}
         >
@@ -104,7 +104,7 @@ const Register = () => {
         </Form.Item>
 
         <Form.Item
-          label="Phone Number"
+          label="เบอร์โทร"
           name="phoneNumber"
           rules={[{ required: true, message: 'Please enter your phone number!' }]}
         >
@@ -118,7 +118,7 @@ const Register = () => {
         </Form.Item>
 
         <Form.Item
-          label="Address"
+          label="ที่อยู่"
           name="address"
           rules={[{ required: true, message: 'Please enter your address!' }]}
         >
@@ -135,14 +135,14 @@ const Register = () => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit" block>
-            Register
+            สมัครสมาชิก
           </Button>
         </Form.Item>
 
         <div className="login-link">
-          Already a member?{" "}
+          มีบัญชีอยู่แล้ว{" "}
           <a href="/" className="register-link-anchor">
-            Login here
+            เข้าสู่ระบบ
           </a>
         </div>
       </Form>

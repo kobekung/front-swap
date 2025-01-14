@@ -134,12 +134,12 @@ const ProfileEditForm = ({ editForm, handleChange, handleSave, handleEditToggle 
       <Row gutter={16}>
         <Col span={12}>
           <Button type="primary" block onClick={handleSave}>
-            Save
+            บันทึก
           </Button>
         </Col>
         <Col span={12}>
           <Button type="default" block onClick={handleEditToggle}>
-            Cancel
+            ยกเลิก
           </Button>
         </Col>
       </Row>

@@ -4,7 +4,7 @@ import '../css/FollowersSection.css';
 const FollowersSection = ({ followers, handleProfileClick }) => {
   return (
     <div className="followers-section">
-      <h2>Followers</h2>
+      <h2>ผู้ติดตาม</h2>
       <ul className="followers-list">
         {followers.map((follower) => (
           <li key={follower.id} className="follower-item" onClick={() => handleProfileClick(follower.id)}>

@@ -215,7 +215,7 @@ const OffersDetail = ({ userId, productId, onClose }) => {
         <>
           <h3>ข้อเสนอที่ได้รับ</h3>
           {receivedOffers.length === 0 ? (
-            <p>No received offers found.</p>
+            <p>ไม่มีข้อเสนอที่ได้รับ</p>
           ) : (
             <ul>
               {receivedOffers.map((offer) => (
@@ -247,7 +247,7 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                     </div>
                   </div>
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
-                    สถานะข้อเสนอ: {offer.status}
+                  สถานะข้อเสนอ: {offer.status === 'ACCEPTED' ? 'ยอมรับแล้ว' : offer.status === 'PENDING' ? 'รอยอมรับ' : 'ยกเลิกแล้ว'}
                   </div>
                   {offer.status === 'PENDING' && (
                     <div className="offer-actions">
@@ -325,7 +325,7 @@ const OffersDetail = ({ userId, productId, onClose }) => {
         <>
           <h3>ข้อเสนอที่คุณส่ง</h3>
           {sentOffers.length === 0 ? (
-            <p>No sent offers found.</p>
+            <p>ไม่มีข้อเสนอที่คุณส่ง</p>
           ) : (
             <ul>
               {sentOffers.map((offer) => (
@@ -357,7 +357,7 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                     </div>
                   </div>
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
-                    สถานะข้อเสนอ: {offer.status}
+                    สถานะข้อเสนอ: {offer.status === 'ACCEPTED' ? 'ยอมรับแล้ว' : offer.status === 'PENDING' ? 'รอยอมรับ' : 'ยกเลิกแล้ว'}
                   </div>
 
                   {offer.status === 'ACCEPTED' && (
