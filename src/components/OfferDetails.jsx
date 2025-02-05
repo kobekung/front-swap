@@ -249,6 +249,13 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
                     สถานะข้อเสนอ: {offer.status === 'ACCEPTED' ? 'ยอมรับแล้ว' : offer.status === 'PENDING' ? 'รอยอมรับ' : 'ยกเลิกแล้ว'}
                   </div>
+                  <Button 
+                        onClick={() => openChat(offer)} 
+                        icon={<MessageOutlined />} 
+                        style={{ color: 'blue' }}
+                      >
+                        แชท
+                      </Button>
                   {offer.status === 'PENDING' && (
                     <div className="offer-actions">
                       <Button onClick={() => handleAccept(offer.id)} icon={<CheckCircleOutlined />} style={{ color: 'green' }}>
@@ -261,13 +268,7 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                   )}
                   {offer.status === 'ACCEPTED' && (
                     <div className="chat-actions">
-                      <Button 
-                        onClick={() => openChat(offer)} 
-                        icon={<MessageOutlined />} 
-                        style={{ color: 'blue' }}
-                      >
-                        แชท
-                      </Button>
+                      
                       {!offer.deliveryType && ( // Only show the delivery buttons if no delivery type is selected
                         <div className="button-container">
                           <Button
@@ -359,16 +360,17 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
                     สถานะข้อเสนอ: {offer.status === 'ACCEPTED' ? 'ยอมรับแล้ว' : offer.status === 'PENDING' ? 'รอยอมรับ' : 'ยกเลิกแล้ว'}
                   </div>
-
-                  {offer.status === 'ACCEPTED' && (
-                    <div className="chat-actions">
-                      <Button 
+                  <Button 
                         onClick={() => openChat(offer)} 
                         icon={<MessageOutlined />} 
                         style={{ color: 'blue' }}
                       >
                         แชท
                       </Button>
+
+                  {offer.status === 'ACCEPTED' && (
+                    <div className="chat-actions">
+                      
                       {offer.deliveryType && (
                         <div>
                           <Button
