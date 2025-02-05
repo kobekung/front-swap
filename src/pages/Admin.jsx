@@ -3,6 +3,9 @@ import axios from "axios";
 import { Modal } from 'antd';
 import { useNavigate } from "react-router-dom";
 import '../css/Admin.css';
+import { Button,Form,Input,List,PageHeader } from 'antd';
+
+
 
 const Admin = () => {
   const [currentSection, setCurrentSection] = useState(""); // State to manage the current section
@@ -110,31 +113,40 @@ const Admin = () => {
   return (
     <div className="admin">
       <header className="admin-header">
-        <h1>Admin Dashboard</h1>
+        <h1>Admin Management</h1>
         <nav>
-          <button onClick={() => handleMenuClick("addCategory")}>Add Category</button>
-          <button onClick={() => handleMenuClick("report")}>Report Products</button>
-          <button onClick={() => handleMenuClick("reportUser")}>Report Users</button>
-          <button onClick={() => handleMenuClick("banList")}>User Ban List</button>
-          <button onClick={() => navigate(-1)}>Back</button>
+          <Button onClick={() => handleMenuClick("addCategory")}>เพิ่มประเภทสินค้า</Button>
+          <Button onClick={() => handleMenuClick("report")}>รายงานโพสต์</Button>
+          <Button onClick={() => handleMenuClick("reportUser")}>รายงานผู้ใช้</Button>
+          <Button onClick={() => handleMenuClick("banList")}>รายชื่อผู้ใช้ที่ถูกแบน</Button>
+          <Button onClick={() => navigate(-1)}>ย้อนกลับ</Button>
         </nav>
       </header>
 
       <main>
         {currentSection === "addCategory" && (
           <div className="category-section">
-            <h2>Add New Category</h2>
-            <form onSubmit={handleSubmit}>
-              <label htmlFor="categoryName">Category Name:</label>
-              <input
-                id="categoryName"
-                type="text"
-                value={categoryName}
-                onChange={handleCategoryNameChange}
-                required
-              />
-              <button type="submit">Add Category</button>
-            </form>
+            <h2>เพิ่มประเภทสินค้าใหม่</h2>
+            <Form
+              onFinish={handleSubmit}
+              layout="vertical"
+            >
+              <Form.Item
+                name="categoryName"
+                label="ชื่อประเภทสินค้า"
+                rules={[{ required: true, message: "Please enter category name!" }]}
+              >
+                <Input
+                  value={categoryName}
+                  onChange={handleCategoryNameChange}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  เพิ่ม
+                </Button>
+              </Form.Item>
+            </Form>
             {success && <p style={{ color: "green" }}>{success}</p>}
             {error && <p style={{ color: "red" }}>{error}</p>}
           </div>
@@ -142,29 +154,39 @@ const Admin = () => {
 
         {currentSection === "report" && (
           <div className="report-section">
-            <h2>Reports</h2>
+            <h2>รายงาน</h2>
             {reports.length > 0 ? (
-              <ul>
-                {reports.map((report) => (
-                  <li key={report.id}>
-                    <div className="report-content">
-                      <p><strong>หัวข้อรายงาน:</strong> {report.reason}</p>
-                      <p><strong>รายระเอียดการรายงาน:</strong> {report.details || "No additional details"}</p>
-                      <p><strong>สถานะ:</strong> {report.status}</p>
-                      <p><strong>รายงานโดย:</strong> {report.user.firstName} {report.user.lastName}</p>
-                      <p><strong>สินค้า:</strong> {report.product.name}</p>
-                      <button onClick={() => handleDeleteProduct(report.product.id)}>
-                        Delete Product
-                      </button>
-                    </div>
+              <List
+                itemLayout="vertical"
+                dataSource={reports}
+                renderItem={(report) => (
+                  <List.Item style={{ padding: "10px" }}>
+                    <List.Item.Meta
+                      description={
+                        <div>
+                          <p><strong>หัวข้อรายงาน:</strong> {report.reason}</p>
+                          <p><strong>รายระเอียดการรายงาน:</strong> {report.details || "No additional details"}</p>
+                          <p><strong>สถานะ:</strong> {report.status}</p>
+                          <p><strong>รายงานโดย:</strong> {report.user.firstName} {report.user.lastName}</p>
+                          <p><strong>สินค้า:</strong> {report.product.name}</p>
+                        </div>
+                      }
+                    />
                     <div className="product-image-re">
                       <img src={report.product.image} alt={report.product.name} />
                     </div>
-                  </li>
-                ))}
-              </ul>
+                    <Button
+                      type="primary"
+                      danger
+                      onClick={() => handleDeleteProduct(report.product.id)}
+                    >
+                      ลบโพสต์
+                    </Button>
+                  </List.Item>
+                )}
+              />
             ) : (
-              <p>No reports found.</p>
+              <p>ไม่เจอการรายงาน</p>
             )}
             {error && <p style={{ color: "red" }}>{error}</p>}
           </div>
@@ -173,38 +195,54 @@ const Admin = () => {
 
         {currentSection === "reportUser" && (
           <div className="user-report-section">
-            <h2>Report Users</h2>
+            <h2>รายงานผู้ใช้</h2>
             {userReports.length > 0 ? (
-              <ul>
-                {userReports.map((report) => (
-                  <li key={report.id}>
-                    <p><strong>Report Reason:</strong> {report.reason}</p>
-                    <p><strong>Details:</strong> {report.details || "No additional details"}</p>
-                    <p><strong>Status:</strong> {report.status}</p>
-                    <p><strong>Reported By:</strong> {report.user.firstName} {report.user.lastName}</p>
-                    <p><strong>User:</strong> {report.reportedUser.firstName} {report.reportedUser.lastName}</p>
-                  </li>
-                ))}
-              </ul>
+              <List
+                itemLayout="vertical"
+                dataSource={userReports}
+                renderItem={(report) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={report.reason}
+                      description={
+                        <div>
+                          <p><strong>Details:</strong> {report.details || "No additional details"}</p>
+                          <p><strong>Status:</strong> {report.status}</p>
+                          <p><strong>Reported By:</strong> {report.user.firstName} {report.user.lastName}</p>
+                          <p><strong>User:</strong> {report.reportedUser.firstName} {report.reportedUser.lastName}</p>
+                        </div>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
             ) : (
-              <p>No user reports found.</p>
+              <p>ไม่เจอการรายงานผู้ใช้.</p>
             )}
           </div>
         )}
 
         {currentSection === "banList" && (
           <div className="ban-list-section">
-            <h2>User Ban List</h2>
+            <h2>รายชื่อผู้ใช้ที่ถูกแบน</h2>
             {banList.length > 0 ? (
-              <ul>
-                {banList.map((user) => (
-                  <li key={user.id}>
-                    <p><strong>User:</strong> {user.firstName} {user.lastName}</p>
-                    <p><strong>Ban Reason:</strong> {user.banReason}</p>
-                    <p><strong>Ban Date:</strong> {new Date(user.banDate).toLocaleDateString()}</p>
-                  </li>
-                ))}
-              </ul>
+              <List
+                itemLayout="vertical"
+                dataSource={banList}
+                renderItem={(user) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={`${user.firstName} ${user.lastName}`}
+                      description={
+                        <div>
+                          <p><strong>Ban Reason:</strong> {user.banReason}</p>
+                          <p><strong>Ban Date:</strong> {new Date(user.banDate).toLocaleDateString()}</p>
+                        </div>
+                      }
+                    />
+                  </List.Item>
+                )}
+              />
             ) : (
               <p>No banned users found.</p>
             )}

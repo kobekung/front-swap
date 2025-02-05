@@ -80,7 +80,7 @@ const Login = () => {
 
         <Form.Item>
           <Checkbox defaultChecked>จดจำรหัสผ่าน</Checkbox>
-          <a href="#!" className="forgot-password-link">ลืมรหัสผ่าน?</a>
+          <a href="#!" className="forgot-password-link" style={{ float: 'right' }}>ลืมรหัสผ่าน?</a>
         </Form.Item>
 
         <Form.Item>

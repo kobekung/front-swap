@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, Form, Input, InputNumber, Upload, Button, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Modal, Form, Input, InputNumber, Upload, Button, message, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -7,6 +7,20 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
   const [form] = Form.useForm();
   const [uploading, setUploading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/categories');
+            setCategories(response.data);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    };
+
+    fetchCategories();
+}, []);
 
   const handleSubmit = async (values) => {
     const confirmSubmit = window.confirm('Are you sure you want to submit this offer?');
@@ -98,6 +112,19 @@ const OfferForm = ({ productId, fromUserId, toUserId, onClose }) => {
             parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
           />
         </Form.Item>
+        <Form.Item
+                name="categoryId"
+                label="ประเภทสินค้า"
+                rules={[{ required: true, message: 'กรุณาเลือกประเภทสินค้า' }]}
+            >
+                <Select placeholder="เลือกประเภท">
+                    {categories.map((category) => (
+                        <Select.Option key={category.id} value={category.id}>
+                            {category.name}
+                        </Select.Option>
+                    ))}
+                </Select>
+            </Form.Item>
 
         <Form.Item
           label="รูปสินค้า"

@@ -247,7 +247,7 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                     </div>
                   </div>
                   <div className={`offer-status ${offer.status.toLowerCase()}`}>
-                  สถานะข้อเสนอ: {offer.status === 'ACCEPTED' ? 'ยอมรับแล้ว' : offer.status === 'PENDING' ? 'รอยอมรับ' : 'ยกเลิกแล้ว'}
+                    สถานะข้อเสนอ: {offer.status === 'ACCEPTED' ? 'ยอมรับแล้ว' : offer.status === 'PENDING' ? 'รอยอมรับ' : 'ยกเลิกแล้ว'}
                   </div>
                   {offer.status === 'PENDING' && (
                     <div className="offer-actions">

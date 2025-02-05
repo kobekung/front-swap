@@ -9,7 +9,7 @@ const Header = ({ searchProduct, handleSearchChange, handleCategoryChange, categ
     <header className="header">
       <img
         className="logo"
-        src="https://images.scalebranding.com/stylish-cool-wolf-logo-b993bf0f-1bea-4f1f-8687-aa1a2f24c204.jpg"
+        src="https://static.vecteezy.com/system/resources/previews/017/080/209/non_2x/letter-s-switch-arrow-swap-change-transfer-reload-opposite-reverse-repeat-line-logo-design-vector.jpg"
         alt="Switch Swap"
       />
       <input

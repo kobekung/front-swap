@@ -31,7 +31,7 @@ const ProductsSection = ({
     confirm({
       title: 'คุณต้องการลบโพสต์นี้หรือไม่?',
       icon: <ExclamationCircleOutlined />,
-      content: 'การลบโพสต์ไม่สามารถยกเลิกได้',
+      content: 'การลบโพสต์ไม่สามารถเลียกคืนได้',
       okText: 'ยืนยัน',
       okType: 'danger',
       cancelText: 'ยกเลิก',
@@ -43,7 +43,9 @@ const ProductsSection = ({
 
   const renderDropdownMenu = (product) => (
     <Menu>
-      <Menu.Item onClick={() => handleReportProduct(product.id)}>รายงานโพสต์</Menu.Item>
+      {user.id !== product.user.id && (
+        <Menu.Item onClick={() => handleReportProduct(product.id)}>รายงานโพสต์</Menu.Item>
+      )}    
       {user.id === product.user.id && (
         <Menu.Item onClick={() => handleDeleteConfirm(product.id)}>ลบโพสต์</Menu.Item>
       )}
@@ -75,13 +77,13 @@ const ProductsSection = ({
             style={{ margin: '16px 0' }}
             cover={
               <div>
+                <div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold', margin: '5px' }}>{product.name}</div>
                 <img 
                   src={product.image || '/default-product.png'} 
                   alt={product.name} 
                   onClick={() => handleProductClick(product.id)}
-                  style={{ cursor: 'pointer', width: '300px', height: '300px', objectFit: 'cover', display: 'block', margin: '0 auto' }}
-                />
-                <div style={{ textAlign: 'center', fontSize: '16px', fontWeight: 'bold', marginTop: '5px' }}>{product.name}</div>
+                  style={{ cursor: 'pointer', width: '300px', height: '300px', objectFit: 'cover', display: 'block', margin: '0 auto',borderRadius: '5px' }}
+                />             
               </div>
             }
             actions={[
