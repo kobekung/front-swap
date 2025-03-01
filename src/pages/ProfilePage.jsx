@@ -1,12 +1,12 @@
-// src/pages/ProfilePage.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { message,Modal } from 'antd';
+import { message, Modal, Button } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../css/ProfilePage.css'; // Add your profile page styles
-import { Button } from 'react-bootstrap';
 import ProfileEditForm from '../components/ProfileEditForm'; // Import the ProfileEditForm component
+
 const { confirm } = Modal;
+
 const ProfilePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -21,8 +21,8 @@ const ProfilePage = () => {
   const [products, setProducts] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); // State for edit mode
-  const [editForm, setEditForm] = useState({ // State for edit form values
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
     firstName: '',
     lastName: '',
     nickname: '',
@@ -30,14 +30,16 @@ const ProfilePage = () => {
     address: '',
     profilePicture: '',
   });
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
+  const [showAllReviews, setShowAllReviews] = useState(false); // State to track show all reviews popup
 
   useEffect(() => {
-    // Fetch user profile and products
     const fetchUser = async () => {
       try {
         const response = await axios.get(`http://localhost:3001/users/${id}`);
         setUser(response.data);
-        setEditForm(response.data); // Initialize form with current user data
+        setEditForm(response.data); 
         console.log('Profile Owner Details:', response.data);
       } catch (error) {
         console.error('Error fetching user:', error);
@@ -58,7 +60,6 @@ const ProfilePage = () => {
   }, [id]);
 
   useEffect(() => {
-    // Fetch current user ID from localStorage
     const fetchCurrentUserId = () => {
       const userId = localStorage.getItem('userId');
       if (userId) {
@@ -73,20 +74,37 @@ const ProfilePage = () => {
   }, []);
 
   useEffect(() => {
-    // Check following status
     const checkFollowingStatus = async () => {
       if (currentUserId && id) {
         try {
           const response = await axios.get(`http://localhost:3001/follow/${currentUserId}/following/${id}`);
           setIsFollowing(response.data);
         } catch (error) {
-          console.error('Error checking follow status:', error);  
+          console.error('Error checking follow status:', error);
         }
       }
     };
 
     checkFollowingStatus();
   }, [currentUserId, id]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/reviews/${id}`);
+        console.log('Full Response:', response.data);
+        setReviews(response.data);
+        
+        const totalRating = response.data.reduce((acc, review) => acc + review.rating, 0);
+        const average = totalRating / response.data.length;
+        setAverageRating(average);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+
+    fetchReviews();
+  }, [id]);
 
   const handleFollow = async () => {
     Modal.confirm({
@@ -132,7 +150,7 @@ const ProfilePage = () => {
   };
 
   const handleBack = () => {
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1);
   };
 
   const handleEditToggle = () => {
@@ -141,6 +159,14 @@ const ProfilePage = () => {
 
   const handleProductClick = (productId) => {
     navigate(`/products/${productId}?userId=${id}`);
+  };
+
+  const handleShowAllReviews = () => {
+    setShowAllReviews(true);
+  };
+
+  const handleCloseReviewsModal = () => {
+    setShowAllReviews(false);
   };
 
   return (
@@ -154,21 +180,37 @@ const ProfilePage = () => {
               className="profile-image" 
             />
           </div>
-          <div className="profile-details">
-            <h1>{user.firstName} {user.lastName}</h1>
-            <h2>{user.nickname}</h2>
-            <div className="profile-actions">
+          <div className="profile-actions">
               {currentUserId && currentUserId === id && (
-                <Button variant="primary" onClick={handleEditToggle}>แก้ไขโปรไฟล์</Button>
+                <Button type="primary" onClick={handleEditToggle}>แก้ไขโปรไฟล์</Button>
               )}
+
+              <div className="profile-reviews">
+                <h3>คะแนนรีวิว: {averageRating.toFixed(1)} ⭐</h3>
+                {reviews.length > 0 ? (
+                  <div>
+                    <div className="review-card">
+                      <p><strong>{reviews[0].userfrom.firstName}:</strong> {reviews[0].content}</p>
+                      <p>คะแนน: {reviews[0].rating} ⭐</p>
+                    </div>
+                    {reviews.length > 1 && (
+                      <Button type="link" onClick={handleShowAllReviews}>
+                        ดูรีวิวทั้งหมด
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <p>ยังไม่มีรีวิว</p>
+                )}
+              </div>
+
               {currentUserId && currentUserId !== id && (
                 isFollowing ? (
-                  <Button variant="danger" onClick={handleUnfollow}>ยกเลิกติดตาม</Button>
+                  <Button type="danger" onClick={handleUnfollow}>ยกเลิกติดตาม</Button>
                 ) : (
-                  <Button variant="primary" onClick={handleFollow}>ติดตาม</Button>
+                  <Button type="primary" onClick={handleFollow}>ติดตาม</Button>
                 )
               )}
-            </div>
           </div>
         </div>
       </div>
@@ -197,7 +239,7 @@ const ProfilePage = () => {
             <p>อีเมล: {user.email}</p>
             <p>เบอร์โทร: {user.phoneNumber}</p>
             <p>ที่อยู่: {user.address}</p>
-            <Button variant="secondary" onClick={handleBack}>ย้อนกลับ</Button>
+            <Button style={{ backgroundColor: '#0431fa', borderColor: '#0431fa' }} type="secondary" onClick={handleBack}>ย้อนกลับ</Button>
           </>
         )}
       </div>
@@ -215,7 +257,7 @@ const ProfilePage = () => {
               <div className="profile-product-info">
                 <h3 className="profile-product-name">{product.name}</h3>
                 <span className="profile-product-status" style={{ backgroundColor: getStatusColor(product.status) }}>
-                {product.status === 'available' ? 'พร้อมแลก' : 'แลกแล้ว'}
+                  {product.status === 'available' ? 'พร้อมแลก' : 'แลกแล้ว'}
                 </span>
               </div>
             </div>
@@ -224,6 +266,22 @@ const ProfilePage = () => {
           <p>ไม่มีสินค้า.</p>
         )}
       </div>
+
+      {/* Modal for showing all reviews */}
+      <Modal
+        title="รีวิวทั้งหมด"
+        visible={showAllReviews}
+        onCancel={handleCloseReviewsModal}
+        footer={null}
+        width={600}
+      >
+        {reviews.map((review) => (
+          <div key={review.id} className="review-card">
+            <p><strong>{review.userfrom.firstName}:</strong> {review.content}</p>
+            <p>คะแนน: {review.rating} ⭐</p>
+          </div>
+        ))}
+      </Modal>
     </div>
   );
 };

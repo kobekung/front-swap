@@ -118,3 +118,17 @@
 .profile-product-status.blue {
   background-color: blue;
 }
+.profile-reviews {
+  margin-top: 20px;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.review-card {
+  background: #f9f9f9;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  color: black; /* Set text color to black */
+}
+
