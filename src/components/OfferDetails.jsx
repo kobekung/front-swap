@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, List, Avatar, Card, Modal, message } from 'antd';
+import { Button, List, Avatar, Card, Modal, message, Input, Rate } from 'antd';
 import {  CloseOutlined, MessageOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 import '../css/OffersDetail.css'; // Ensure the path is correct
@@ -20,7 +20,11 @@ const OffersDetail = ({ userId, productId, onClose }) => {
   const [isChatOpen, setIsChatOpen] = useState(false); // Track whether chat is open
   const [chatUserId, setChatUserId] = useState(null); // Store the ID of the user to chat with
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reviewContent, setReviewContent] = useState("");
+  const [rating, setRating] = useState(5);
   const navigate = useNavigate();
+  const [isReviewed, setIsReviewed] = useState(false); //
 
   const id = localStorage.getItem('userId');
 
@@ -46,6 +50,26 @@ const OffersDetail = ({ userId, productId, onClose }) => {
     if (userId) fetchOffers();
   }, [userId]);
 
+
+  const handleReviewSubmit = async (user_toId) => {
+    try {
+      const userId = id; // หรือจะใช้จาก state ก็ได้
+  
+      await axios.post("http://localhost:3001/reviews", {
+        userFromId: userId, // ผู้ที่รีวิว (จาก userId ที่ยิงเข้ามา)
+        userToId: user_toId, // ผู้ที่ถูกรีวิว
+        content: reviewContent,
+        rating: rating,
+      });
+  
+      alert("รีวิวสำเร็จ!");
+      setIsModalOpen(false);
+      setIsReviewed(true); // อัปเดตสถานะเป็น "รีวิวแล้ว"
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการส่งรีวิว", error);
+    }
+  };
+  
   const handleAccept = (offerId) => {
     confirm({
       title: 'Confirm Acceptance',
@@ -324,6 +348,32 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                               ? 'แลกสำเร็จ' 
                               : 'ยืนยันว่าได้รับของแล้ว'}
                           </Button>
+                          {offer.product.status === "complete" && (
+                                  isReviewed ? (
+                                    <Button type="default" disabled>รีวิวแล้ว</Button>
+                                  ) : (
+                                    <Button type="primary" onClick={() => setIsModalOpen(true)}>รีวิว</Button>
+                                  )
+                                )}
+
+                                <Modal 
+                                  title="รีวิวสินค้า"
+                                  open={isModalOpen}
+                                  onCancel={() => setIsModalOpen(false)}
+                                  footer={[
+                                    <Button key="cancel" onClick={() => setIsModalOpen(false)}>ยกเลิก</Button>,
+                                    <Button key="submit" type="primary" onClick={() => handleReviewSubmit(offer.fromUser.id)}>ส่งรีวิว</Button>,
+                                  ]}
+                                >
+                                  <Input.TextArea
+                                    rows={4}
+                                    value={reviewContent}
+                                    onChange={(e) => setReviewContent(e.target.value)}
+                                    placeholder="รีวิวสินค้า..."
+                                  />
+                                  <Rate value={rating} onChange={setRating} />
+                                </Modal>
+                          
                         </div>
                       )}
                     </div>
@@ -401,7 +451,35 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                             {isCompleted || offer.product.status === 'complete' 
                               ? 'แลกสำเร็จ' 
                               : 'ยืนยันว่าได้รับของแล้ว'}
+                              
                           </Button>
+                          {offer.product.status === "complete" && (
+                                  isReviewed ? (
+                                    <Button type="default" disabled>รีวิวแล้ว</Button>
+                                  ) : (
+                                    <Button type="primary" onClick={() => setIsModalOpen(true)}>รีวิว</Button>
+                                  )
+                                )}
+
+                                <Modal 
+                                  title="รีวิวสินค้า"
+                                  open={isModalOpen}
+                                  onCancel={() => setIsModalOpen(false)}
+                                  footer={[
+                                    <Button key="cancel" onClick={() => setIsModalOpen(false)}>ยกเลิก</Button>,
+                                    <Button key="submit" type="primary" onClick={() => handleReviewSubmit(offer.toUser.id)}>ส่งรีวิว</Button>,
+                                  ]}
+                                >
+                                  <Input.TextArea
+                                    rows={4}
+                                    value={reviewContent}
+                                    onChange={(e) => setReviewContent(e.target.value)}
+                                    placeholder="รีวิวสินค้า..."
+                                  />
+                                  <Rate value={rating} onChange={setRating} />
+                                </Modal>
+
+                          
                         </div>
                       )}
                     </div>
