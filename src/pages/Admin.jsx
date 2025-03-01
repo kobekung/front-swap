@@ -39,13 +39,12 @@ const Admin = () => {
     setCategoryName(event.target.value);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (values) => {
     setError("");
     setSuccess("");
-
+  
     try {
-      await axios.post("http://localhost:3001/categories", { name: categoryName });
+      await axios.post("http://localhost:3001/categories", { name: values.categoryName });
       setSuccess("Category added successfully!");
       setCategoryName(""); // Clear input field
     } catch (error) {
@@ -53,6 +52,8 @@ const Admin = () => {
       console.error("Error adding category:", error);
     }
   };
+  
+  
 
   const handleMenuClick = (section) => {
     setCurrentSection(section);

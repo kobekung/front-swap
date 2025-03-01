@@ -89,7 +89,7 @@ const ProductsSection = ({
             actions={[
               <Button
                 icon={<CommentOutlined />}
-                onClick={() => handleProductClick(product.id)}
+                onClick={() => handleProductClick(product.id)} //TODO: link
                 type="link"
               >
                 คอมเมนต์

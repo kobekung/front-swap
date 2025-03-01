@@ -6,7 +6,9 @@ import {  CloseOutlined, MessageOutlined, CheckCircleOutlined, CloseCircleOutlin
 
 import '../css/OffersDetail.css'; // Ensure the path is correct
 import Chat from '../pages/ChatPage'; // Import the Chat component
+import { useNavigate } from 'react-router-dom';
 const { confirm } = Modal;
+
 
 const OffersDetail = ({ userId, productId, onClose }) => {
   const [receivedOffers, setReceivedOffers] = useState([]);
@@ -18,6 +20,9 @@ const OffersDetail = ({ userId, productId, onClose }) => {
   const [isChatOpen, setIsChatOpen] = useState(false); // Track whether chat is open
   const [chatUserId, setChatUserId] = useState(null); // Store the ID of the user to chat with
   const [isCompleted, setIsCompleted] = useState(false);
+  const navigate = useNavigate();
+
+  const id = localStorage.getItem('userId');
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -141,6 +146,12 @@ const OffersDetail = ({ userId, productId, onClose }) => {
       console.error('Error:', error);
     }
   };
+  const handleProductClick = (productId) => {
+    navigate(`/products/${productId}?userId=${id}`);
+  };
+  const handleOfferClick = (offerId) => {
+    navigate(`/offershow/${offerId}?userId=${id}`);
+  };
 
   const openChat = (offer) => {
     // If the clicked offer has the same productId as the active chat, don't open a new chat
@@ -238,11 +249,13 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                         className="offer-product-image"
                         src={offer.image}
                         alt={offer.name}
+                        onClick={() => handleOfferClick(offer.id)}
                       />
                       <img
                         className="offer-product-image"
                         src={offer.product.image}
                         alt={offer.product.name}
+                        onClick={() => handleProductClick(offer.product.id)}
                       />
                     </div>
                   </div>
@@ -349,11 +362,14 @@ const OffersDetail = ({ userId, productId, onClose }) => {
                         className="offer-product-image"
                         src={offer.image}
                         alt={offer.name}
+                        onClick={() => handleOfferClick(offer.id)}
+                        
                       />
-                      <img
-                        className="offer-product-image"
+                      <img 
+                        className="offer-product-image "
                         src={offer.product.image}
                         alt={offer.product.name}
+                        onClick={() => handleProductClick(offer.product.id)}
                       />
                     </div>
                   </div>

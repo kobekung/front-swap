@@ -9,6 +9,7 @@ import Admin from './pages/Admin';
 import './css/style.css';
 import Register from './pages/Register';
 import Chat from './pages/ChatPage';
+import OfferShow from './components/OfferShow';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/offers/:offerId" element={<OfferDetails />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/admin/:id" element={<Admin />} />
+        <Route path="/offershow/:offerId" element={<OfferShow />} />
         
 
       </Routes>
