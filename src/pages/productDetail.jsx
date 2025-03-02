@@ -16,7 +16,8 @@ const ProductDetail = () => {
   const [showOfferForm, setShowOfferForm] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [commentText, setCommentText] = useState('');
-
+  const [replyText, setReplyText] = useState({});
+  const [replyingTo, setReplyingTo] = useState(null);  
   const queryParams = new URLSearchParams(window.location.search);
   const userId = queryParams.get('userId');
 
@@ -59,6 +60,32 @@ const ProductDetail = () => {
       console.error('Error adding comment:', error);
     }
   };
+  const handleReply = async (parentId) => {
+    if (!replyText[parentId]?.trim()) return;
+  
+    try {
+      const response = await axios.post(
+        `http://localhost:3001/comments/reply/${parentId}`,
+        {
+          user_id: userId,
+          product_id: id,
+          content: replyText[parentId],
+        }
+      );
+  
+      setComments(comments.map(comment =>
+        comment.id === parentId
+          ? { ...comment, replies: [...(comment.replies || []), response.data] }
+          : comment
+      ));
+  
+      setReplyText({ ...replyText, [parentId]: '' });
+      setReplyingTo(null);
+    } catch (error) {
+      console.error('Error replying to comment:', error);
+    }
+  };
+  
 
   const handleClose = () => navigate(-1);
 
@@ -94,11 +121,11 @@ const ProductDetail = () => {
           <p><span>โพสต์สินค้าโดย:</span> {user ? `${user.firstName} ${user.lastName}` : 'Unknown'}</p>
         </div>
 
-        {/* <div className="product-detail-actions">
+        <div className="product-detail-actions">
           <Button type="primary" onClick={() => handleExchangeClick(product)}>
             เสนอแลก
           </Button>
-        </div> */}
+        </div>
 
         {/* Comments Section */}
         <div className="comments-section">
@@ -115,7 +142,7 @@ const ProductDetail = () => {
           </Button>
 
           <List
-            itemLayout="horizontal"
+            itemLayout="vertical"
             dataSource={comments}
             renderItem={(comment) => (
               <List.Item>
@@ -123,9 +150,7 @@ const ProductDetail = () => {
                   avatar={<Avatar src={comment.user?.profilePicture || '/default-user.png'} />}
                   title={
                     <span>
-                      {comment.user
-                        ? `${comment.user.firstName} ${comment.user.lastName}`
-                        : 'Unknown'}
+                      {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown'}
                       <span style={{ marginLeft: 8, fontSize: 12, color: '#999' }}>
                         {new Date(comment.createdAt).toLocaleString()}
                       </span>
@@ -133,9 +158,49 @@ const ProductDetail = () => {
                   }
                   description={comment.content}
                 />
+                <Button type="link" onClick={() => setReplyingTo(comment.id)}>ตอบกลับ</Button>
+
+                {/* กล่องพิมพ์ข้อความสำหรับตอบกลับ */}
+                {replyingTo === comment.id && (
+                  <div style={{ marginTop: 5, paddingLeft: 40 }}>
+                    <TextArea
+                      value={replyText[comment.id] || ''}
+                      onChange={(e) => setReplyText({ ...replyText, [comment.id]: e.target.value })}
+                      rows={2}
+                    />
+                    <Button type="primary" onClick={() => handleReply(comment.id)} style={{ marginTop: 5 }}>
+                      ตอบกลับ
+                    </Button>
+                  </div>
+                )}
+
+                {/* แสดง reply ของคอมเมนต์นี้ */}
+                {comment.replies && (
+                  <List
+                    itemLayout="horizontal"
+                    dataSource={comment.replies}
+                    renderItem={(reply) => (
+                      <List.Item style={{ paddingLeft: 40 }}>
+                        <List.Item.Meta
+                          avatar={<Avatar src={reply.user?.profilePicture || '/default-user.png'} />}
+                          title={
+                            <span>
+                              {reply.user ? `${reply.user.firstName} ${reply.user.lastName}` : 'Unknown'}
+                              <span style={{ marginLeft: 8, fontSize: 12, color: '#999' }}>
+                                {new Date(reply.createdAt).toLocaleString()}
+                              </span>
+                            </span>
+                          }
+                          description={reply.content}
+                        />
+                      </List.Item>
+                    )}
+                  />
+                )}
               </List.Item>
             )}
           />
+
         </div>
       </div>
     </div>
