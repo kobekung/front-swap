@@ -142,65 +142,71 @@ const ProductDetail = () => {
           </Button>
 
           <List
-            itemLayout="vertical"
-            dataSource={comments}
-            renderItem={(comment) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={<Avatar src={comment.user?.profilePicture || '/default-user.png'} />}
-                  title={
-                    <span>
-                      {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown'}
-                      <span style={{ marginLeft: 8, fontSize: 12, color: '#999' }}>
-                        {new Date(comment.createdAt).toLocaleString()}
-                      </span>
-                    </span>
-                  }
-                  description={comment.content}
-                />
-                <Button type="link" onClick={() => setReplyingTo(comment.id)}>ตอบกลับ</Button>
-
-                {/* กล่องพิมพ์ข้อความสำหรับตอบกลับ */}
-                {replyingTo === comment.id && (
-                  <div style={{ marginTop: 5, paddingLeft: 40 }}>
-                    <TextArea
-                      value={replyText[comment.id] || ''}
-                      onChange={(e) => setReplyText({ ...replyText, [comment.id]: e.target.value })}
-                      rows={2}
-                    />
-                    <Button type="primary" onClick={() => handleReply(comment.id)} style={{ marginTop: 5 }}>
-                      ตอบกลับ
-                    </Button>
-                  </div>
-                )}
-
-                {/* แสดง reply ของคอมเมนต์นี้ */}
-                {comment.replies && (
-                  <List
-                    itemLayout="horizontal"
-                    dataSource={comment.replies}
-                    renderItem={(reply) => (
-                      <List.Item style={{ paddingLeft: 40 }}>
-                        <List.Item.Meta
-                          avatar={<Avatar src={reply.user?.profilePicture || '/default-user.png'} />}
-                          title={
-                            <span>
-                              {reply.user ? `${reply.user.firstName} ${reply.user.lastName}` : 'Unknown'}
-                              <span style={{ marginLeft: 8, fontSize: 12, color: '#999' }}>
-                                {new Date(reply.createdAt).toLocaleString()}
-                              </span>
+              itemLayout="vertical"
+              dataSource={comments}
+              renderItem={(comment) => (
+                <List.Item>
+                  {/* คอมเมนต์หลักที่ไม่มี parentId */}
+                  {!comment.parent && (
+                    <>
+                      <List.Item.Meta
+                        avatar={<Avatar src={comment.user?.profilePicture || '/default-user.png'} />}
+                        title={
+                          <span>
+                            {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown'}
+                            <span style={{ marginLeft: 8, fontSize: 12, color: '#999' }}>
+                              {new Date(comment.createdAt).toLocaleString()}
                             </span>
-                          }
-                          description={reply.content}
-                        />
-                      </List.Item>
-                    )}
-                  />
-                )}
-              </List.Item>
-            )}
-          />
+                          </span>
+                        }
+                        description={comment.content}
+                      />
+                      
+                      {/* ปุ่มตอบกลับสำหรับคอมเมนต์หลัก */}
+                      <Button type="link" onClick={() => setReplyingTo(comment.id)}>ตอบกลับ</Button>
+                    </>
+                  )}
 
+                  {/* กล่องพิมพ์ข้อความสำหรับตอบกลับ */}
+                  {replyingTo === comment.id && (
+                    <div style={{ marginTop: 5, paddingLeft: 40 }}>
+                      <TextArea
+                        value={replyText[comment.id] || ''}
+                        onChange={(e) => setReplyText({ ...replyText, [comment.id]: e.target.value })}
+                        rows={2}
+                      />
+                      <Button type="primary" onClick={() => handleReply(comment.id)} style={{ marginTop: 5 }}>
+                        ตอบกลับ
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* แสดง reply ของคอมเมนต์นี้ */}
+                  {comment.replies && comment.replies.length > 0 && (
+                    <List
+                      itemLayout="horizontal"
+                      dataSource={comment.replies}
+                      renderItem={(reply) => (
+                        <List.Item style={{ paddingLeft: 40 }}>
+                          <List.Item.Meta
+                            avatar={<Avatar src={reply.user?.profilePicture || '/default-user.png'} />}
+                            title={
+                              <span>
+                                {reply.user ? `${reply.user.firstName} ${reply.user.lastName}` : 'Unknown'}
+                                <span style={{ marginLeft: 8, fontSize: 12, color: '#999' }}>
+                                  {new Date(reply.createdAt).toLocaleString()}
+                                </span>
+                              </span>
+                            }
+                            description={reply.content}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  )}
+                </List.Item>
+              )}
+        />
         </div>
       </div>
     </div>
